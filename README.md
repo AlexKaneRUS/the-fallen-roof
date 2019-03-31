@@ -250,6 +250,10 @@ NPC при столкновении с ними.
 
 ![Use case диаграмма](diagrams/use_case.png)
 
+# Диаграмма компонент
+
+![Диаграмма компонент](diagrams/components.png)
+
 # Диаграмма классов
 
 ![Диаграмма классов](diagrams/classes.svg)
