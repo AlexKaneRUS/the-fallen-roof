@@ -14,6 +14,7 @@ class WorldModel:
 
         self.current_location = WorldModel.Location.KT
 
+        self.location_map = None
         self.player = Player()
         self.graph_repr['player'].add(self.player)
 
