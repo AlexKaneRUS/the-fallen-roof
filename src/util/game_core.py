@@ -8,12 +8,13 @@ class GameCore(ABC):
         pygame.init()
 
         # init display
+        self.background = pygame.Surface((screen_width, screen_height))
+        self.background.fill((0, 0, 0))
         pygame.display.set_caption(title)
-        pygame.font.init()
         self.main_surface = pygame.display.set_mode((screen_width, screen_height))
 
         # init graphic representation
-        self.groups = []
+        self.groups = {}
 
         # init sound
         pygame.mixer.pre_init(44100, 16, 2, 4096)
@@ -23,7 +24,7 @@ class GameCore(ABC):
         self.clock = pygame.time.Clock()
 
         # init user-action handlers
-        self.keyboard_handlers = defaultdict(list)
+        self.keyboard_handlers = {}
 
         # init game end flag
         self.game_over = False
@@ -42,6 +43,8 @@ class GameCore(ABC):
 
     def run(self):
         while not self.game_over:
+            self.main_surface.blit(self.background, (0, 0))
+
             self.process_events()
             self.update()
             self.draw()
