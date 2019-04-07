@@ -8,13 +8,24 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((255, 255, 255))
         self.rect = self.image.get_rect()
 
+        self.x = 0
+        self.y = 0
 
-    def handle_movement(self, key):
+
+    def handle_movement(self, key, terrain):
         if key == pygame.K_DOWN and self.rect.bottom < screen_height:
-            self.rect.move_ip(0, tile_width)
+            if terrain[self.x][self.y + 1].isPassable():
+                self.y += 1
+                self.rect.move_ip(0, tile_width)
         if key == pygame.K_UP and self.rect.top > 0:
-            self.rect.move_ip(0, -tile_width)
+            if terrain[self.x][self.y - 1].isPassable():
+                self.y -= 1
+                self.rect.move_ip(0, -tile_width)
         if key == pygame.K_LEFT and self.rect.left > 0:
-            self.rect.move_ip(-tile_width, 0)
+            if terrain[self.x - 1][self.y].isPassable():
+                self.x -= 1
+                self.rect.move_ip(-tile_width, 0)
         if key == pygame.K_RIGHT and self.rect.right < screen_width:
-            self.rect.move_ip(tile_width, 0)
+            if terrain[self.x + 1][self.y].isPassable():
+                self.x += 1
+                self.rect.move_ip(tile_width, 0)

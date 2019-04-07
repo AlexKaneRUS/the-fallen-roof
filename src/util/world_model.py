@@ -1,5 +1,6 @@
 from enum import Enum
 from src.characters.player import Player
+import src.terrain.gen_terrain as gt
 
 
 class WorldModel:
@@ -14,10 +15,13 @@ class WorldModel:
 
         self.current_location = WorldModel.Location.KT
 
-        self.location_map = None
+        self.location_terrain = gt.gen_terrain()
+        for col in self.location_terrain:
+            for cell in col:
+                self.graph_repr['terrain'].add(cell)
         self.player = Player()
         self.graph_repr['player'].add(self.player)
 
     def handle_key(self, key):
-        self.player.handle_movement(key)
+        self.player.handle_movement(key, self.location_terrain)
 
