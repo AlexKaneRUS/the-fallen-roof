@@ -1,5 +1,6 @@
 import pygame
 from src.util.config import screen_height, screen_width, tile_width
+from src.util.game_core import UserEvents
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -10,6 +11,8 @@ class Player(pygame.sprite.Sprite):
 
         self.x = 0
         self.y = 0
+
+        pygame.event.post(pygame.event.Event(UserEvents.GAME_OVER))
 
 
     def handle_movement(self, key, terrain):

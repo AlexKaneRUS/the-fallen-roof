@@ -1,12 +1,10 @@
 import pygame
 import sys
-from collections import defaultdict
 
 from src.util.game_core import GameCore
+from src.util.game_core import UserEvents
 from src.util.world_model import WorldModel
 import src.util.config as conf
-
-from src.characters.player import Player
 
 
 class FallenRoof(GameCore):

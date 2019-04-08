@@ -1,6 +1,11 @@
 import pygame
 from abc import abstractmethod, ABC
-from collections import defaultdict
+from enum import IntEnum
+
+
+class UserEvents(IntEnum):
+    GAME_OVER = pygame.USEREVENT + 1
+
 
 class GameCore(ABC):
     def __init__(self, title='game', screen_width=800, screen_height=600, fps=60):
