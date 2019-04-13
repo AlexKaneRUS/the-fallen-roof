@@ -1,5 +1,5 @@
 import pygame
-from src.util.enums import Direction
+from src.util.enums import Direction, TurnOwner
 
 
 class KeyboardHandler:
@@ -13,16 +13,20 @@ class KeyboardHandler:
         }
 
     def handle(self, key):
-        self.key_handlers[key]()
+        return self.key_handlers[key]()
 
     def _k_down(self):
         self.world_model.move_player(Direction.DOWN)
+        return TurnOwner.AI_TURN
 
     def _k_up(self):
         self.world_model.move_player(Direction.UP)
+        return TurnOwner.AI_TURN
 
     def _k_left(self):
         self.world_model.move_player(Direction.LEFT)
+        return TurnOwner.AI_TURN
 
     def _k_right(self):
         self.world_model.move_player(Direction.RIGHT)
+        return TurnOwner.AI_TURN

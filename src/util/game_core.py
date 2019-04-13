@@ -1,11 +1,7 @@
 import pygame
 import sys
 from abc import abstractmethod, ABC
-from enum import IntEnum
-
-
-class UserEvents(IntEnum):
-    GAME_OVER = pygame.USEREVENT + 1
+from src.util.enums import TurnOwner
 
 
 class GameCore(ABC):
@@ -36,7 +32,7 @@ class GameCore(ABC):
 
         # init game end flag
         self.game_over = False
-        self.player_turn = True
+        self.turn = TurnOwner.PLAYER_TURN
 
     def process_global_events(self):
         events = pygame.event.get(pygame.QUIT)
@@ -70,13 +66,13 @@ class GameCore(ABC):
                 self.turn_ticks -= 1
                 pygame.event.clear(pygame.KEYDOWN)
             else:
-                if self.player_turn:
-                    self.player_turn = self.process_player_action()
-                    if not self.player_turn:
+                if self.turn == TurnOwner.PLAYER_TURN:
+                    self.turn = self.process_player_action()
+                    if self.turn == TurnOwner.AI_TURN:
                         self.set_turn_ticks()
                 else:
                     self.do_ai_turn()
-                    self.player_turn = True
+                    self.turn = TurnOwner.PLAYER_TURN
                     self.set_turn_ticks()
 
             self.draw()
