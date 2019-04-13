@@ -1,3 +1,4 @@
+import pygame
 from src.model.characters.player import Player
 import src.model.terrain.gen_terrain as gt
 
@@ -21,6 +22,10 @@ class WorldModel:
                 self.graph_repr['terrain'].add(cell)
 
         self.graph_repr['player'].add(self.player)
+
+
+    def do_ai_turn(self):
+        pygame.event.pump()
 
     def move_player(self, dir):
         self.player.handle_movement(dir, self.location_terrain)

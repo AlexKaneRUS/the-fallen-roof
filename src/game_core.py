@@ -6,10 +6,9 @@ from src.util.enums import TurnOwner
 
 class GameCore(ABC):
     def __init__(self, title='game', screen_width=800, screen_height=600, fps=60, turn_delay=60):
-        # init pygame
-        pygame.init()
 
         # init display
+        pygame.display.init()
         self.background = pygame.Surface((screen_width, screen_height))
         self.background.fill((0, 0, 0))
         pygame.display.set_caption(title)
@@ -58,6 +57,7 @@ class GameCore(ABC):
 
     def run(self):
         while not self.game_over:
+            pygame.time.wait(0)
             self.main_surface.blit(self.background, (0, 0))
 
             self.process_global_events()

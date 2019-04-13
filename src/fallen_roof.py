@@ -23,13 +23,16 @@ class FallenRoof(GameCore):
         self.groups['player'] = pygame.sprite.GroupSingle()
 
     def process_player_action(self):
-        event = pygame.event.poll()
+        event = pygame.event.wait()
+        if event.type == pygame.QUIT:
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
+            return TurnOwner.PLAYER_TURN
         if event.type == pygame.KEYDOWN:
             return self.keyboard_handler.handle(event.key)
         return TurnOwner.PLAYER_TURN
 
     def do_ai_turn(self):
-        pygame.event.pump()
+        self.world_model.do_ai_turn()
 
     def draw(self):
         for group in self.groups.values():
