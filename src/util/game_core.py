@@ -8,7 +8,7 @@ class UserEvents(IntEnum):
 
 
 class GameCore(ABC):
-    def __init__(self, title='game', screen_width=800, screen_height=600, fps=60):
+    def __init__(self, title='game', screen_width=800, screen_height=600, fps=60, turn_delay=60):
         # init pygame
         pygame.init()
 
@@ -27,31 +27,48 @@ class GameCore(ABC):
         # init clock
         self.fps = fps
         self.clock = pygame.time.Clock()
+        self.turn_delay = turn_delay
+        self.turn_ticks = 0
 
         # init user-action handlers
         self.keyboard_handlers = {}
 
         # init game end flag
         self.game_over = False
+        self.player_turn = True
 
     @abstractmethod
-    def process_events(self):
+    def process_player_action(self):
         pass
 
     @abstractmethod
-    def update(self):
+    def do_ai_turn(self):
         pass
 
     @abstractmethod
     def draw(self):
         pass
 
+    def set_turn_ticks(self):
+        self.turn_ticks = self.turn_delay
+
     def run(self):
         while not self.game_over:
             self.main_surface.blit(self.background, (0, 0))
 
-            self.process_events()
-            self.update()
+            if self.turn_ticks:
+                self.turn_ticks -= 1
+                pygame.event.clear()
+            else:
+                if self.player_turn:
+                    self.player_turn = self.process_player_action()
+                    if not self.player_turn:
+                        self.set_turn_ticks()
+                else:
+                    self.do_ai_turn()
+                    self.player_turn = True
+                    self.set_turn_ticks()
+
             self.draw()
 
             pygame.display.update()
