@@ -1,4 +1,5 @@
 import pygame
+import sys
 from abc import abstractmethod, ABC
 from enum import IntEnum
 
@@ -37,6 +38,13 @@ class GameCore(ABC):
         self.game_over = False
         self.player_turn = True
 
+    def process_global_events(self):
+        events = pygame.event.get(pygame.QUIT)
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
     @abstractmethod
     def process_player_action(self):
         pass
@@ -56,9 +64,11 @@ class GameCore(ABC):
         while not self.game_over:
             self.main_surface.blit(self.background, (0, 0))
 
+            self.process_global_events()
+
             if self.turn_ticks:
                 self.turn_ticks -= 1
-                pygame.event.clear()
+                pygame.event.clear(pygame.KEYDOWN)
             else:
                 if self.player_turn:
                     self.player_turn = self.process_player_action()

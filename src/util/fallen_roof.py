@@ -29,12 +29,8 @@ class FallenRoof(GameCore):
 
     def process_player_action(self):
         event = pygame.event.poll()
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             self.world_model.handle_key(event.key)
-            pygame.event.clear(pygame.KEYDOWN)
             return False
         return True
 
