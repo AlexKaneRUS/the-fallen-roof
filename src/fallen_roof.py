@@ -1,7 +1,7 @@
 import pygame
-from src.util.game_core import GameCore
+from src.game_core import GameCore
 from src.handlers.keyboard_handler import KeyboardHandler
-from src.util.world_model import WorldModel
+from src.model.world_model import WorldModel
 from src.util.enums import TurnOwner
 import src.util.config as conf
 
