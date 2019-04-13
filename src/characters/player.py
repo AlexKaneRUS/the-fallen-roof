@@ -1,9 +1,10 @@
 import pygame
 from src.util.enums import Direction
 from src.util.config import screen_height, screen_width, tile_width
+from src.util.singleton import Singleton
 
 
-class Player(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite, metaclass=Singleton):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((tile_width, tile_width))
