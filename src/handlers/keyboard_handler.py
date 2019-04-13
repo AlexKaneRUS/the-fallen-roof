@@ -13,7 +13,10 @@ class KeyboardHandler:
         }
 
     def handle(self, key):
-        return self.key_handlers[key]()
+        if key in self.key_handlers:
+            return self.key_handlers[key]()
+        else:
+            return TurnOwner.PLAYER_TURN
 
     def _k_down(self):
         self.world_model.move_player(Direction.DOWN)
