@@ -3,7 +3,7 @@ import random
 import pygame
 
 from src.model.characters.has_battle_system import HasBattleSystem
-from src.model.characters.has_coordinates import HasCoordinates
+from src.model.characters.has_coordinates import HasCoordinates, ConfusedMovementHandlerStateDecorator
 from src.model.characters.mobs.strategy import AggressiveStrategy, \
     FrightenedStrategy, PassiveStrategy
 from src.util.config import tile_width
@@ -28,6 +28,14 @@ class Mob(HasBattleSystem, HasCoordinates,
     def get_next_turn(self, player_coordinates):
         return self.strategy.get_next_move(self.world_graph, (self.x, self.y),
                                            player_coordinates)
+
+    def attack(self, other):
+        if random.randint(0, 5) == 0:
+            other.movement_handler_state = \
+                ConfusedMovementHandlerStateDecorator(
+                    other.movement_handler_state,
+                    3
+                )
 
 
 class MobFactory:

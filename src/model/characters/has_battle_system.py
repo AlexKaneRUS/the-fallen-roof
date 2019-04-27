@@ -8,3 +8,6 @@ class HasBattleSystem:
 
     def is_alive(self):
         return self.health > 0
+
+    def attack(self, other):
+        pass

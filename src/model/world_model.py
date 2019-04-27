@@ -67,7 +67,9 @@ class WorldModel:
                                                         Mob)) or (
                         issubclass(obj.__class__, Mob) and isinstance(
                     other_obj, Player))):
+            obj.attack(other_obj)
             other_obj.damage(obj.strength)
+            other_obj.attack(obj)
             obj.damage(other_obj.strength)
 
             self.check_player()
