@@ -21,6 +21,7 @@ class FallenRoof(GameCore):
     def _init_graphic_repr(self):
         self.groups['terrain'] = pygame.sprite.Group()
         self.groups['player'] = pygame.sprite.GroupSingle()
+        self.groups['mobs'] = pygame.sprite.Group()
 
     def process_player_action(self):
         event = pygame.event.wait()

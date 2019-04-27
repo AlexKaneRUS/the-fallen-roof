@@ -1,7 +1,7 @@
 import pygame
 import sys
 from abc import abstractmethod, ABC
-from src.util.enums import TurnOwner
+from src.util.enums import TurnOwner, UserEvents
 
 
 class GameCore(ABC):
@@ -34,11 +34,14 @@ class GameCore(ABC):
         self.turn = TurnOwner.PLAYER_TURN
 
     def process_global_events(self):
-        events = pygame.event.get(pygame.QUIT)
+        events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == UserEvents.GAME_OVER:
+                self.game_over = True
+
 
     @abstractmethod
     def process_player_action(self):
@@ -60,8 +63,6 @@ class GameCore(ABC):
             pygame.time.wait(0)
             self.main_surface.blit(self.background, (0, 0))
 
-            self.process_global_events()
-
             if self.turn_ticks:
                 self.turn_ticks -= 1
                 pygame.event.clear(pygame.KEYDOWN)
@@ -79,3 +80,5 @@ class GameCore(ABC):
 
             pygame.display.update()
             self.clock.tick(self.fps)
+
+            self.process_global_events()
