@@ -1,4 +1,7 @@
 import pygame
+
+from src.model.characters.base_movement_handler_state import BaseMovementHandlerState
+from src.model.characters.confused_movement_handler_state_decorator import ConfusedMovementHandlerStateDecorator
 from src.model.characters.player import Player
 import src.model.terrain.gen_terrain as gt
 
@@ -9,7 +12,7 @@ class WorldModel:
         # actual state
         self.graph_repr = graph_repr
         self.current_location = None
-        self.player = Player()
+        self.player = Player(ConfusedMovementHandlerStateDecorator(BaseMovementHandlerState(), 10))
         self.map = None # will be tile grid
         self.npc = [] # will be list of active npc
 
