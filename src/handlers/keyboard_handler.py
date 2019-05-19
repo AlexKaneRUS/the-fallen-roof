@@ -3,13 +3,15 @@ from src.util.enums import Direction, TurnOwner
 
 
 class KeyboardHandler:
-    def __init__(self, world_model):
-        self.world_model = world_model
+    def __init__(self, game):
+        self.game = game
+        self.world_model = game.world_model
         self.key_handlers = {
-            pygame.K_DOWN  : self._k_down,
-            pygame.K_UP    : self._k_up,
-            pygame.K_LEFT  : self._k_left,
-            pygame.K_RIGHT : self._k_right
+            pygame.K_DOWN: self._k_down,
+            pygame.K_UP: self._k_up,
+            pygame.K_LEFT: self._k_left,
+            pygame.K_RIGHT: self._k_right,
+            pygame.K_i: self._k_i
         }
 
     def handle(self, key):
@@ -33,3 +35,11 @@ class KeyboardHandler:
     def _k_right(self):
         self.world_model.move_player(Direction.RIGHT)
         return TurnOwner.AI_TURN
+
+    def _k_i(self):
+        if self.game.in_inventory:
+            self.game.close_inventory()
+        else:
+            self.game.open_inventory()
+
+        return TurnOwner.PLAYER_TURN

@@ -16,12 +16,14 @@ class FallenRoof(GameCore):
 
         self._init_graphic_repr()
         self.world_model = WorldModel(self.groups)
-        self.keyboard_handler = KeyboardHandler(self.world_model)
+        self.keyboard_handler = KeyboardHandler(self)
+        self.in_inventory = False
 
     def _init_graphic_repr(self):
         self.groups['terrain'] = pygame.sprite.Group()
         self.groups['player'] = pygame.sprite.GroupSingle()
         self.groups['mobs'] = pygame.sprite.Group()
+        self.groups['items'] = pygame.sprite.Group()
 
     def process_player_action(self):
         event = pygame.event.wait()
@@ -30,6 +32,7 @@ class FallenRoof(GameCore):
             return TurnOwner.PLAYER_TURN
         if event.type == pygame.KEYDOWN:
             return self.keyboard_handler.handle(event.key)
+
         return TurnOwner.PLAYER_TURN
 
     def do_ai_turn(self):
@@ -38,3 +41,18 @@ class FallenRoof(GameCore):
     def draw(self):
         for group in self.groups.values():
             group.draw(self.main_surface)
+
+    def open_inventory(self):
+        self.in_inventory = True
+
+        inv = self.world_model.player.Inventory(self.world_model.player,
+            x=(self.background.get_width() - 500) / 2,
+            y=(self.background.get_height() - 400) / 2, width=500, height=400)
+        self.to_draw.append(inv)
+
+    def close_inventory(self):
+        self.in_inventory = False
+
+        self.to_draw = list(filter(
+            lambda x: not isinstance(x, self.world_model.player.Inventory),
+            self.to_draw))

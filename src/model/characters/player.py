@@ -1,14 +1,15 @@
 import pygame
 
-from src.model.characters.has_coordinates import HasCoordinates, \
+from src.model.characters.has_inventory import HasInventory
+from src.model.has_coordinates import HasCoordinates, \
     BaseMovementHandlerState, ConfusedMovementHandlerStateDecorator
-from src.model.characters.has_battle_system import HasBattleSystem
 from src.util.config import screen_height, screen_width, tile_width
 from src.util.singleton import Singleton
 
 
-class Player(HasCoordinates, HasBattleSystem, pygame.sprite.Sprite,
+class Player(HasCoordinates, HasInventory, pygame.sprite.Sprite,
              metaclass=Singleton):
+
     def __init__(self, world_graph):
         pygame.sprite.Sprite.__init__(self)
 
@@ -19,9 +20,30 @@ class Player(HasCoordinates, HasBattleSystem, pygame.sprite.Sprite,
                                 ConfusedMovementHandlerStateDecorator(
                                     BaseMovementHandlerState(), 10))
 
-        HasBattleSystem.__init__(self, 100, 10)
+        self.next_level = 100
+        self.basic_health = 100
+        self.basic_strength = 10
+
+        HasInventory.__init__(self, self.basic_health, self.basic_strength)
 
         self.world_graph = world_graph
+
+    def on_pickup(self):
+        pass
+
+    def level_up(self):
+        if self.experience >= self.next_level:
+            print("Level up!")
+
+            self.level += int(self.experience / self.next_level)
+            self.experience %= self.next_level
+
+            self.health = 1.5 ** self.level * self.basic_health
+            self.strength = 1.5 ** self.level * self.basic_strength
+
+            for x in self.equipped_items:
+                self.unequip_item(x)
+                self.equip_item(x)
 
     def get_next_turn(self, direction):
         direction, self.movement_handler_state = self.movement_handler_state(
