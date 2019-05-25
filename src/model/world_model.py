@@ -21,8 +21,6 @@ class WorldModel:
             'items': pygame.sprite.Group(),
         }
 
-        self.current_location = None
-
         self.location_terrain = gt.gen_terrain()
         self.world_graph = self.terrain_to_world_graph(self.location_terrain)
 
