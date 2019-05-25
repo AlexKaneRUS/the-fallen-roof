@@ -44,7 +44,7 @@ class HasInventory(ABC, HasBattleSystem):
             self.strength -= self.items[i].strength_buff
 
     class Inventory:
-        def __init__(self, player, x=0, y=0, width=300, height=200):
+        def __init__(self, player, x=0, y=0, width=300, height=200, new_game_command=None):
             self.player = player
 
             self.image = None
@@ -52,10 +52,10 @@ class HasInventory(ABC, HasBattleSystem):
             self.items = []
             self.text_rect = None
 
-            self.reinit(x, y, width, height)
+            self.reinit(x, y, width, height, new_game_command)
 
         class Command:
-            def __init__(self, j, inv):
+            def __init__(self, j, inv, new_game_command):
                 self.j = j
                 self.inv = inv
 
@@ -68,7 +68,7 @@ class HasInventory(ABC, HasBattleSystem):
                                 self.inv.rect.height)
                 pygame.event.post(pygame.event.Event(UserEvents.EMPTY, {}))
 
-        def _draw_items(self, bot_left_txt):
+        def _draw_items(self, bot_left_txt, new_game_command):
             bot_left_x, bot_left_y = bot_left_txt
             n = len(self.player.items)
 
@@ -85,7 +85,7 @@ class HasInventory(ABC, HasBattleSystem):
                                                                   item.strength_buff)
                 button = Button(item_text,
                                 width=item_width, height=item_height - 1,
-                                command=self.Command(i, self),
+                                command=self.Command(i, self, new_game_command),
                                 image_over=item.generate_image(), toggled=i in self.player.equipped_items)
                 button.rect.topleft = bot_left_txt
                 button.rect.top += 1
@@ -116,7 +116,7 @@ class HasInventory(ABC, HasBattleSystem):
 
             return health_strength_level_rect.bottomleft
 
-        def reinit(self, x, y, width, height):
+        def reinit(self, x, y, width, height, new_game_command):
             self.image = pygame.Surface((width, height))
             self.image.fill(Color.GREY.value)
             self.rect = self.image.get_rect()
@@ -125,12 +125,16 @@ class HasInventory(ABC, HasBattleSystem):
 
             text_image = font.render('Inventory', True, Color.BLACK.value)
             self.text_rect = text_image.get_rect(midtop=self.rect.midtop)
-
             self.image.blit(text_image, self.text_rect)
+
+            self.new_game_button = Button("New game", width=80, height=30, command=new_game_command)
+            self.new_game_button.rect.topright = self.rect.topright
+            self.image.blit(self.new_game_button.image, self.new_game_button.rect)
+
             prev_bot = self.update_stat()
 
             self.items = []
-            self._draw_items(prev_bot)
+            self._draw_items(prev_bot, new_game_command)
 
             self.rect = self.image.get_rect(topleft=(x, y))
 
@@ -147,3 +151,5 @@ class HasInventory(ABC, HasBattleSystem):
 
             for item in self.items:
                 item.handle_event(event)
+
+            self.new_game_button.handle_event(event)

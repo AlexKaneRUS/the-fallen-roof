@@ -5,7 +5,6 @@ from src.util.enums import Direction, TurnOwner
 class KeyboardHandler:
     def __init__(self, game):
         self.game = game
-        self.world_model = game.world_model
         self.key_handlers = {
             pygame.K_DOWN: self._k_down,
             pygame.K_UP: self._k_up,
@@ -21,19 +20,19 @@ class KeyboardHandler:
             return TurnOwner.PLAYER_TURN
 
     def _k_down(self):
-        self.world_model.move_player(Direction.DOWN, self.game.sprites)
+        self.game.world_model.move_player(Direction.DOWN, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_up(self):
-        self.world_model.move_player(Direction.UP, self.game.sprites)
+        self.game.world_model.move_player(Direction.UP, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_left(self):
-        self.world_model.move_player(Direction.LEFT, self.game.sprites)
+        self.game.world_model.move_player(Direction.LEFT, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_right(self):
-        self.world_model.move_player(Direction.RIGHT, self.game.sprites)
+        self.game.world_model.move_player(Direction.RIGHT, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_i(self):

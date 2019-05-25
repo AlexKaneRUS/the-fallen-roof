@@ -16,13 +16,7 @@ class FallenRoof(GameCore):
                          fps=conf.fps,
                          turn_delay=conf.turn_delay)
 
-        if os.path.isfile(conf.save_file_path):
-            with open(conf.save_file_path, "rb") as file:
-                self.world_model = pickle.load(file)
-        else:
-            self.world_model = WorldModel.generate()
-        # init graphic representation
-        self.sprites = self.world_model.build_sprites()
+        self.init_world_model()
         self.keyboard_handler = KeyboardHandler(self)
         self.in_inventory = False
 
@@ -47,9 +41,20 @@ class FallenRoof(GameCore):
     def open_inventory(self):
         self.in_inventory = True
 
-        inv = self.world_model.player.Inventory(self.world_model.player,
+        def new_game_command():
+            self.remove_save_file()
+            self.init_world_model()
+            self.close_inventory()
+
+
+        inv = self.world_model.player.Inventory(
+            self.world_model.player,
             x=(self.background.get_width() - 500) / 2,
-            y=(self.background.get_height() - 400) / 2, width=500, height=400)
+            y=(self.background.get_height() - 400) / 2,
+            width=500,
+            height=400,
+            new_game_command=new_game_command,
+        )
         self.to_draw.append(inv)
 
     def close_inventory(self):
@@ -61,4 +66,17 @@ class FallenRoof(GameCore):
 
     def run(self):
         super().run()
-        os.remove(conf.save_file_path)
+        self.remove_save_file()
+
+    def remove_save_file(self):
+        if os.path.isfile(conf.save_file_path):
+            os.remove(conf.save_file_path)
+
+    def init_world_model(self):
+        if os.path.isfile(conf.save_file_path):
+            with open(conf.save_file_path, "rb") as file:
+                self.world_model = pickle.load(file)
+        else:
+            self.world_model = WorldModel.generate()
+        # init graphic representation
+        self.sprites = self.world_model.build_sprites()
