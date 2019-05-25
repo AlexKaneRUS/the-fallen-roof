@@ -13,7 +13,7 @@ from src.util.enums import Color
 
 class Mob(HasCoordinates, HasInventory,
           pygame.sprite.Sprite):
-    def __init__(self, world_graph, strategy, health, strength,
+    def __init__(self, strategy, health, strength,
                  experience_from_killing, color):
         pygame.sprite.Sprite.__init__(self)
 
@@ -24,13 +24,11 @@ class Mob(HasCoordinates, HasInventory,
         HasCoordinates.__init__(self, tile_width, self.rect)
         HasInventory.__init__(self, health, strength)
 
-        self.world_graph = world_graph
-
         self.strategy = strategy
         self.experience_from_killing = experience_from_killing
 
-    def get_next_turn(self, player_coordinates):
-        return self.strategy.get_next_move(self.world_graph, (self.x, self.y),
+    def get_next_turn(self, player_coordinates, world_graph):
+        return self.strategy.get_next_move(world_graph, (self.x, self.y),
                                            player_coordinates)
 
     def on_pickup(self):
@@ -58,24 +56,24 @@ class Mob(HasCoordinates, HasInventory,
 
 class MobFactory:
     @staticmethod
-    def create_aggressive_mob(world_graph):
-        return Mob(world_graph, AggressiveStrategy(), 10, 5, 10,
+    def create_aggressive_mob():
+        return Mob(AggressiveStrategy(), 10, 5, 10,
                    Color.RED.value)
 
     @staticmethod
-    def create_frightened_mob(world_graph):
-        return Mob(world_graph, FrightenedStrategy(), 5, 100, 100,
+    def create_frightened_mob():
+        return Mob(FrightenedStrategy(), 5, 100, 100,
                    Color.BLUE.value)
 
     @staticmethod
-    def create_passive_mob(world_graph):
-        return Mob(world_graph, PassiveStrategy(), 100, 0, 0,
+    def create_passive_mob():
+        return Mob(PassiveStrategy(), 100, 0, 0,
                    Color.BROWN.value)
 
     @staticmethod
-    def create_random_mobs(world_graph, n=1):
+    def create_random_mobs(n=1):
         return [random.choice([MobFactory.create_aggressive_mob,
                                MobFactory.create_frightened_mob,
-                               MobFactory.create_passive_mob])(world_graph) for
+                               MobFactory.create_passive_mob])() for
                 _
                 in range(n)]

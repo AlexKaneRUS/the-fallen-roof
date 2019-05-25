@@ -21,14 +21,14 @@ class WorldModel:
         self.location_terrain = gt.gen_terrain()
         self.world_graph = self.terrain_to_world_graph(self.location_terrain)
 
-        self.player = Player(self.world_graph)
+        self.player = Player()
         self.spawn_object_and_update_graph(self.player)
 
         for col in self.location_terrain:
             for cell in col:
                 self.graph_repr['terrain'].add(cell)
 
-        self.mobs = MobFactory.create_random_mobs(self.world_graph, 20)
+        self.mobs = MobFactory.create_random_mobs(20)
         for mob in self.mobs:
             self.spawn_object_and_update_graph(mob)
             self.graph_repr['mobs'].add(mob)
@@ -42,13 +42,11 @@ class WorldModel:
 
     def do_ai_turn(self):
         for mob in self.mobs:
-            next_move = mob.get_next_turn((self.player.x, self.player.y))
-            self.move_logic(mob, next_move)
+            self.move_logic(mob, mob.get_next_turn((self.player.x, self.player.y), self.world_graph))
         pygame.event.pump()
 
     def move_player(self, dir):
-        next_move = self.player.get_next_turn(dir)
-        self.move_logic(self.player, next_move)
+        self.move_logic(self.player, self.player.get_next_turn(dir))
 
     def check_player(self):
         if not self.player.is_alive():
@@ -70,6 +68,8 @@ class WorldModel:
         self.world_graph[(obj.x, obj.y)].object = obj
 
     def move_logic(self, obj, next_move):
+        if next_move not in self.world_graph.keys():
+            next_move = (obj.x, obj.y)
         other_obj = self.world_graph[next_move].object
 
         if other_obj is not None:

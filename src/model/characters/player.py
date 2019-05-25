@@ -10,7 +10,7 @@ from src.util.singleton import Singleton
 class Player(HasCoordinates, HasInventory, pygame.sprite.Sprite,
              metaclass=Singleton):
 
-    def __init__(self, world_graph):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = pygame.Surface((tile_width, tile_width))
@@ -25,8 +25,6 @@ class Player(HasCoordinates, HasInventory, pygame.sprite.Sprite,
         self.basic_strength = 10
 
         HasInventory.__init__(self, self.basic_health, self.basic_strength)
-
-        self.world_graph = world_graph
 
     def on_pickup(self):
         pass
@@ -49,20 +47,16 @@ class Player(HasCoordinates, HasInventory, pygame.sprite.Sprite,
         direction, self.movement_handler_state = self.movement_handler_state(
             direction)
 
-        res = [self.x, self.y]
+        x = self.x
+        y = self.y
 
         if direction.contains_down() and self.rect.bottom < screen_height:
-            res[1] += 1
+            y += 1
         if direction.contains_up() and self.rect.top > 0:
-            res[1] -= 1
+            y -= 1
         if direction.contains_left() and self.rect.left > 0:
-            res[0] -= 1
+            x -= 1
         if direction.contains_right() and self.rect.right < screen_width:
-            res[0] += 1
+            x += 1
 
-        res = (res[0], res[1])
-
-        if res in self.world_graph.keys():
-            return res
-        else:
-            return self.x, self.y
+        return x, y

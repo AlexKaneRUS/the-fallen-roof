@@ -39,9 +39,6 @@ class Item(pygame.sprite.Sprite, HasCoordinates):
 
         self.item_type = item_type
 
-    def get_next_turn(self, *args):
-        raise NotImplementedError
-
 
 class ItemFactory:
     @staticmethod

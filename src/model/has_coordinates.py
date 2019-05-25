@@ -17,10 +17,6 @@ class HasCoordinates(ABC):
                           (new_coordinates[1] - self.y) * self.tile_width)
         self.x, self.y = new_coordinates
 
-    @abstractmethod
-    def get_next_turn(self, *args):
-        pass
-
 
 class BaseMovementHandlerState:
     def __init__(self):
