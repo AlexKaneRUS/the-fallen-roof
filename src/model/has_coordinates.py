@@ -20,10 +20,9 @@ class HasCoordinates(HasImage, ABC):
 
         self.movement_handler_state = movement_handler_state
 
-    def set_coordinates(self, new_coordinates):
-        self.rect.move_ip((new_coordinates[0] - self.x) * self.tile_width,
-                          (new_coordinates[1] - self.y) * self.tile_width)
-        self.x, self.y = new_coordinates
+    def set_coordinates(self, coordinates):
+        self.x, self.y = coordinates
+        self.rect.topleft = (self.x * self.tile_width, self.y * self.tile_width)
 
 
 class BaseMovementHandlerState:
