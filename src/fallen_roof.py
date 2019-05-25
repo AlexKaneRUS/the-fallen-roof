@@ -17,7 +17,10 @@ class FallenRoof(GameCore):
                          turn_delay=conf.turn_delay)
 
         self.init_world_model()
-        self.keyboard_handler = KeyboardHandler(self)
+        self.keyboard_handler = KeyboardHandler(
+            lambda direction: self.world_model.move_player(direction, self.sprites),
+            lambda: self.close_inventory() if self.in_inventory else self.open_inventory(),
+        )
         self.in_inventory = False
 
     def process_player_action(self):
@@ -45,7 +48,6 @@ class FallenRoof(GameCore):
             self.remove_save_file()
             self.init_world_model()
             self.close_inventory()
-
 
         inv = self.world_model.player.Inventory(
             self.world_model.player,

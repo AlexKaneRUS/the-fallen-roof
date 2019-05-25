@@ -3,8 +3,7 @@ from src.util.enums import Direction, TurnOwner
 
 
 class KeyboardHandler:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, move_command, toggle_inventory_command):
         self.key_handlers = {
             pygame.K_DOWN: self._k_down,
             pygame.K_UP: self._k_up,
@@ -12,6 +11,8 @@ class KeyboardHandler:
             pygame.K_RIGHT: self._k_right,
             pygame.K_i: self._k_i
         }
+        self.move_command = move_command
+        self.toggle_inventory_command = toggle_inventory_command
 
     def handle(self, key):
         if key in self.key_handlers:
@@ -20,25 +21,21 @@ class KeyboardHandler:
             return TurnOwner.PLAYER_TURN
 
     def _k_down(self):
-        self.game.world_model.move_player(Direction.DOWN, self.game.sprites)
+        self.move_command(Direction.DOWN)
         return TurnOwner.AI_TURN
 
     def _k_up(self):
-        self.game.world_model.move_player(Direction.UP, self.game.sprites)
+        self.move_command(Direction.UP)
         return TurnOwner.AI_TURN
 
     def _k_left(self):
-        self.game.world_model.move_player(Direction.LEFT, self.game.sprites)
+        self.move_command(Direction.LEFT)
         return TurnOwner.AI_TURN
 
     def _k_right(self):
-        self.game.world_model.move_player(Direction.RIGHT, self.game.sprites)
+        self.move_command(Direction.RIGHT)
         return TurnOwner.AI_TURN
 
     def _k_i(self):
-        if self.game.in_inventory:
-            self.game.close_inventory()
-        else:
-            self.game.open_inventory()
-
+        self.toggle_inventory_command()
         return TurnOwner.PLAYER_TURN
