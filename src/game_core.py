@@ -60,14 +60,8 @@ class GameCore(ABC):
             nonlocal game_over_button_is_pressed
             game_over_button_is_pressed = True
 
-        game_over_button = Button(
-            "Game over!",
-            x=(self.background.get_width() - 100) / 2,
-            y=(self.background.get_height() - 50) / 2,
-            width=100,
-            height=50,
-            command=on_button_click
-        )
+        game_over_button = Button("Game over!", width=100, height=50, command=on_button_click)
+        game_over_button.rect.center = self.background.get_rect().center
 
         while not self.game_over or not game_over_button_is_pressed:
             self.main_surface.blit(self.background, (0, 0))

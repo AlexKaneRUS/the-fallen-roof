@@ -4,7 +4,7 @@ from src.util.enums import Color
 
 
 class Button:
-    def __init__(self, text, x=0, y=0, width=100, height=50, command=None,
+    def __init__(self, text, width=100, height=50, command=None,
                  image_over=None, toggled=False):
         self.toggled = toggled
         self.text = text
@@ -41,7 +41,7 @@ class Button:
             for image in self.images:
                 image.blit(image_over, image_over.get_rect())
 
-        self.rect = self.image.get_rect(topleft=(x, y))
+        self.rect = self.image.get_rect()
 
     def update(self):
         pass

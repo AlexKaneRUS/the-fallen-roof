@@ -83,11 +83,13 @@ class HasInventory(ABC, HasBattleSystem):
                 item_text = '{}: health +{}, strength +{}'.format(item.name,
                                                                   item.health_buff,
                                                                   item.strength_buff)
-                button = Button(item_text, x=bot_left_x, y=bot_left_y + 1,
+                button = Button(item_text,
                                 width=item_width, height=item_height - 1,
                                 command=self.Command(i, self),
                                 image_over=item.generate_image(), toggled=i in self.player.equipped_items)
-                bot_left_x, bot_left_y = button.rect.bottomleft
+                button.rect.topleft = bot_left_txt
+                button.rect.top += 1
+                bot_left_txt = button.rect.bottomleft
                 button.rect = button.image.get_rect(
                     midtop=(self.rect.midtop[0], button.rect.midtop[1]))
 
