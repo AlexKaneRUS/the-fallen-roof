@@ -10,6 +10,7 @@ from src.model.characters.player import Player
 import src.model.terrain.gen_terrain as gt
 from src.util.enums import UserEvents
 from src.util.config import tile_width
+from src.model.sprites import Sprites
 
 
 class WorldModel:
@@ -21,7 +22,6 @@ class WorldModel:
         def spawn_object_and_update_graph(obj):
             possible_poss = list(filter(lambda x: world_graph[x].object is None, world_graph.keys()))
             obj.x, obj.y = random.choice(possible_poss)
-            obj.rect.topleft = (obj.x * tile_width, obj.y * tile_width)
             world_graph[(obj.x, obj.y)].object = obj
 
         player = Player()
@@ -41,37 +41,37 @@ class WorldModel:
         self.mobs = mobs
         self.items = items
 
-    def build_graph_repr(self):
-        graph_repr = pygame.sprite.Group()
+    def build_sprites(self):
+        sprites = Sprites()
         for col in self.location_terrain:
             for cell in col:
-                graph_repr.add(cell)
+                sprites.add(cell)
         for mob in self.mobs:
-            graph_repr.add(mob)
+            sprites.add(mob)
         for item in self.items:
-            graph_repr.add(item)
-        graph_repr.add(self.player)
-        return graph_repr
+            sprites.add(item)
+        sprites.add(self.player)
+        return sprites
 
-    def do_ai_turn(self, graph_repr):
+    def do_ai_turn(self, sprites):
         for mob in self.mobs:
-            self.move_logic(mob, mob.get_next_turn((self.player.x, self.player.y), self.world_graph), graph_repr)
+            self.move_logic(mob, mob.get_next_turn((self.player.x, self.player.y), self.world_graph), sprites)
         pygame.event.pump()
 
-    def move_player(self, dir, graph_repr):
-        self.move_logic(self.player, self.player.get_next_turn(dir), graph_repr)
+    def move_player(self, dir, sprites):
+        self.move_logic(self.player, self.player.get_next_turn(dir), sprites)
 
     def check_player(self):
         if not self.player.is_alive():
             pygame.event.post(pygame.event.Event(UserEvents.GAME_OVER, {}))
 
-    def move_logic(self, obj, next_move, graph_repr):
+    def move_logic(self, obj, next_move, sprites):
         def battle_process(obj, other_obj):
             def check_mob(mob):
                 if not mob.is_alive():
                     self.world_graph[(mob.x, mob.y)].object = None
                     self.mobs.remove(mob)
-                    graph_repr.remove(mob)
+                    sprites.remove(mob)
 
                     self.player.add_experience(mob.experience_from_killing)
 
@@ -90,7 +90,7 @@ class WorldModel:
         def item_pickup_process(with_inventory: HasInventory, item: Item):
             self.world_graph[(item.x, item.y)].object = None
             self.items.remove(item)
-            graph_repr.remove(item)
+            sprites.remove(item)
 
             with_inventory.pickup_item(item)
 
@@ -115,7 +115,7 @@ class WorldModel:
             self.world_graph[(obj.x, obj.y)].object = None
 
             obj.x, obj.y = next_move
-            obj.rect.topleft = (obj.x * tile_width, obj.y * tile_width)
+            sprites.get_rect(obj).topleft = (obj.x * tile_width, obj.y * tile_width)
             self.world_graph[next_move].object = obj
 
     @staticmethod

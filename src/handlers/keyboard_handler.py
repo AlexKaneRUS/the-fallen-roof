@@ -21,19 +21,19 @@ class KeyboardHandler:
             return TurnOwner.PLAYER_TURN
 
     def _k_down(self):
-        self.world_model.move_player(Direction.DOWN, self.game.graph_repr)
+        self.world_model.move_player(Direction.DOWN, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_up(self):
-        self.world_model.move_player(Direction.UP, self.game.graph_repr)
+        self.world_model.move_player(Direction.UP, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_left(self):
-        self.world_model.move_player(Direction.LEFT, self.game.graph_repr)
+        self.world_model.move_player(Direction.LEFT, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_right(self):
-        self.world_model.move_player(Direction.RIGHT, self.game.graph_repr)
+        self.world_model.move_player(Direction.RIGHT, self.game.sprites)
         return TurnOwner.AI_TURN
 
     def _k_i(self):
