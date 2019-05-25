@@ -14,7 +14,9 @@ class FallenRoof(GameCore):
                          fps=conf.fps,
                          turn_delay=conf.turn_delay)
 
-        self.world_model = WorldModel()
+        self.world_model = WorldModel.generate()
+        # init graphic representation
+        self.graph_repr = self.world_model.build_graph_repr()
         self.keyboard_handler = KeyboardHandler(self)
         self.in_inventory = False
 
@@ -29,10 +31,10 @@ class FallenRoof(GameCore):
         return TurnOwner.PLAYER_TURN
 
     def do_ai_turn(self):
-        self.world_model.do_ai_turn()
+        self.world_model.do_ai_turn(self.graph_repr)
 
     def draw(self):
-        self.world_model.graph_repr.draw(self.main_surface)
+        self.graph_repr.draw(self.main_surface)
 
     def open_inventory(self):
         self.in_inventory = True
