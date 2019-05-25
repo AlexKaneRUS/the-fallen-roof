@@ -111,7 +111,8 @@ class WorldModel:
 
         with_inventory.pickup_item(item)
 
-    def terrain_to_world_graph(self, terrain):
+    @staticmethod
+    def terrain_to_world_graph(terrain):
         world_graph = {}
         for i in range(len(terrain)):
             for j in range(len(terrain[i])):
