@@ -4,7 +4,7 @@ from enum import Enum
 
 import pygame
 
-from src.model.has_coordinates import HasCoordinates
+from src.model.has_image import HasImage
 from src.util.config import tile_width
 
 max_buff = 10
@@ -23,12 +23,13 @@ class ItemType(Enum):
     DEFENSIVE = 'defensive'
 
 
-class Item(HasCoordinates):
+class Item(HasImage):
     def __init__(self, name, health_buff, strength_buff, image_generator, item_type):
         self.name = name
 
         self.image_generator = image_generator
-        HasCoordinates.__init__(self, tile_width)
+        self.x = self.y = 0
+        HasImage.__init__(self)
 
         self.health_buff = health_buff
         self.strength_buff = strength_buff

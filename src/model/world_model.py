@@ -9,6 +9,7 @@ from src.model.world_graph_node import WorldGraphNode
 from src.model.characters.player import Player
 import src.model.terrain.gen_terrain as gt
 from src.util.enums import UserEvents
+from src.util.config import tile_width
 
 
 class WorldModel:
@@ -19,7 +20,8 @@ class WorldModel:
 
         def spawn_object_and_update_graph(obj):
             possible_poss = list(filter(lambda x: world_graph[x].object is None, world_graph.keys()))
-            obj.set_coordinates(random.choice(possible_poss))
+            obj.x, obj.y = random.choice(possible_poss)
+            obj.rect.topleft = (obj.x * tile_width, obj.y * tile_width)
             world_graph[(obj.x, obj.y)].object = obj
 
         player = Player()
@@ -112,7 +114,8 @@ class WorldModel:
         if self.world_graph[next_move].object is None:
             self.world_graph[(obj.x, obj.y)].object = None
 
-            obj.set_coordinates(next_move)
+            obj.x, obj.y = next_move
+            obj.rect.topleft = (obj.x * tile_width, obj.y * tile_width)
             self.world_graph[next_move].object = obj
 
     @staticmethod

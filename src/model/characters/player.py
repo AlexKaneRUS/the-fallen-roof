@@ -1,19 +1,20 @@
 import pygame
 
 from src.model.characters.has_inventory import HasInventory
-from src.model.has_coordinates import HasCoordinates, \
+from src.model.can_move import CanMove, \
     BaseMovementHandlerState, ConfusedMovementHandlerStateDecorator
 from src.util.config import screen_height, screen_width, tile_width
 from src.util.singleton import Singleton
+from src.model.has_image import HasImage
 
 
-class Player(HasCoordinates, HasInventory, metaclass=Singleton):
+class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
     def __init__(self):
-        HasCoordinates.__init__(
+        CanMove.__init__(
             self,
-            tile_width,
             ConfusedMovementHandlerStateDecorator(BaseMovementHandlerState(), 10)
         )
+        HasImage.__init__(self)
 
         self.next_level = 100
         self.basic_health = 100

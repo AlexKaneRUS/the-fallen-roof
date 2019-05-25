@@ -3,19 +3,21 @@ import random
 import pygame
 
 from src.model.characters.has_inventory import HasInventory
-from src.model.has_coordinates import HasCoordinates, \
+from src.model.can_move import CanMove, \
     ConfusedMovementHandlerStateDecorator
 from src.model.characters.mobs.strategy import AggressiveStrategy, \
     FrightenedStrategy, PassiveStrategy
 from src.util.config import tile_width
 from src.util.enums import Color
+from src.model.has_image import HasImage
 
 
-class Mob(HasCoordinates, HasInventory):
+class Mob(CanMove, HasImage, HasInventory):
     def __init__(self, strategy, health, strength,
                  experience_from_killing, color):
         self.color = color
-        HasCoordinates.__init__(self, tile_width)
+        HasImage.__init__(self)
+        CanMove.__init__(self)
         HasInventory.__init__(self, health, strength)
 
         self.strategy = strategy
