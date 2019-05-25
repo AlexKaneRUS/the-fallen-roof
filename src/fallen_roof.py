@@ -4,6 +4,8 @@ from src.handlers.keyboard_handler import KeyboardHandler
 from src.model.world_model import WorldModel
 from src.util.enums import TurnOwner
 import src.util.config as conf
+import pickle
+import os.path
 
 
 class FallenRoof(GameCore):
@@ -14,7 +16,11 @@ class FallenRoof(GameCore):
                          fps=conf.fps,
                          turn_delay=conf.turn_delay)
 
-        self.world_model = WorldModel.generate()
+        if os.path.isfile(conf.save_file_path):
+            with open(conf.save_file_path, "rb") as file:
+                self.world_model = pickle.load(file)
+        else:
+            self.world_model = WorldModel.generate()
         # init graphic representation
         self.sprites = self.world_model.build_sprites()
         self.keyboard_handler = KeyboardHandler(self)
@@ -32,6 +38,8 @@ class FallenRoof(GameCore):
 
     def do_ai_turn(self):
         self.world_model.do_ai_turn(self.sprites)
+        with open(conf.save_file_path, "wb") as file:
+            pickle.dump(self.world_model, file)
 
     def draw(self):
         self.sprites.draw(self.main_surface)
@@ -50,3 +58,7 @@ class FallenRoof(GameCore):
         self.to_draw = list(filter(
             lambda x: not isinstance(x, self.world_model.player.Inventory),
             self.to_draw))
+
+    def run(self):
+        super().run()
+        os.remove(conf.save_file_path)

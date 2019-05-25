@@ -37,18 +37,24 @@ class Item(HasImage):
         self.item_type = item_type
 
     def generate_image(self):
-        return self.image_generator
+        return self.image_generator()
 
 
 class ItemFactory:
+    class ImageGenerator:
+        def __init__(self, path):
+            self.path = path
+
+        def __call__(self):
+            return pygame.transform.scale(pygame.image.load(self.path), (tile_width, tile_width))
+
+    @staticmethod
+    def random_image_generator(item_type):
+        path = os.path.join(os.path.dirname(__file__), "resources", item_type.value)
+        return ItemFactory.ImageGenerator(os.path.join(path, random.choice(os.listdir(path))))
+
     @staticmethod
     def _create_item(item_type):
-        path = os.path.join(os.path.dirname(__file__), "resources", item_type.value)
-        images = [
-            pygame.transform.scale(pygame.image.load(os.path.join(path, x)),
-                                   (tile_width, tile_width))
-            for x in os.listdir(path)]
-
         name = None
 
         health = 0
@@ -71,7 +77,7 @@ class ItemFactory:
             name,
             health,
             strength,
-            random.choice(images),
+            ItemFactory.random_image_generator(item_type),
             item_type
         )
 

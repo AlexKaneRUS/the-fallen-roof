@@ -8,3 +8,4 @@ height_in_tiles = 30
 tile_width = 20
 fps = 60
 turn_delay = 0
+save_file_path = ".save.pickle"
