@@ -22,9 +22,6 @@ class GameCore(ABC):
         self.main_surface = pygame.display.set_mode(
             (screen_width, screen_height))
 
-        # init graphic representation
-        self.groups = {}
-
         # init sound
         pygame.mixer.pre_init(44100, 16, 2, 4096)
 

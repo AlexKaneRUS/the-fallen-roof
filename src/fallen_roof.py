@@ -14,16 +14,9 @@ class FallenRoof(GameCore):
                          fps=conf.fps,
                          turn_delay=conf.turn_delay)
 
-        self._init_graphic_repr()
-        self.world_model = WorldModel(self.groups)
+        self.world_model = WorldModel()
         self.keyboard_handler = KeyboardHandler(self)
         self.in_inventory = False
-
-    def _init_graphic_repr(self):
-        self.groups['terrain'] = pygame.sprite.Group()
-        self.groups['player'] = pygame.sprite.GroupSingle()
-        self.groups['mobs'] = pygame.sprite.Group()
-        self.groups['items'] = pygame.sprite.Group()
 
     def process_player_action(self):
         event = pygame.event.wait()
@@ -39,7 +32,7 @@ class FallenRoof(GameCore):
         self.world_model.do_ai_turn()
 
     def draw(self):
-        for group in self.groups.values():
+        for group in self.world_model.graph_repr.values():
             group.draw(self.main_surface)
 
     def open_inventory(self):

@@ -12,10 +12,15 @@ from src.util.enums import UserEvents
 
 
 class WorldModel:
-    def __init__(self, graph_repr):
+    def __init__(self):
+        # init graphic representation
+        self.graph_repr = {
+            'terrain': pygame.sprite.Group(),
+            'player': pygame.sprite.GroupSingle(),
+            'mobs': pygame.sprite.Group(),
+            'items': pygame.sprite.Group(),
+        }
 
-        # actual state
-        self.graph_repr = graph_repr
         self.current_location = None
 
         self.location_terrain = gt.gen_terrain()
