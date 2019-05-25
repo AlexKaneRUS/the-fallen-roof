@@ -86,7 +86,7 @@ class HasInventory(ABC, HasBattleSystem):
                 button = Button(item_text, x=bot_left_x, y=bot_left_y + 1,
                                 width=item_width, height=item_height - 1,
                                 command=self.Command(i, self),
-                                image_over=item.image, toggled=i in self.player.equipped_items)
+                                image_over=item.generate_image(), toggled=i in self.player.equipped_items)
                 bot_left_x, bot_left_y = button.rect.bottomleft
                 button.rect = button.image.get_rect(
                     midtop=(self.rect.midtop[0], button.rect.midtop[1]))

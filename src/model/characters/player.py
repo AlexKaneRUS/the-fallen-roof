@@ -7,24 +7,24 @@ from src.util.config import screen_height, screen_width, tile_width
 from src.util.singleton import Singleton
 
 
-class Player(HasCoordinates, HasInventory, pygame.sprite.Sprite,
-             metaclass=Singleton):
-
+class Player(HasCoordinates, HasInventory, metaclass=Singleton):
     def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = pygame.Surface((tile_width, tile_width))
-        self.image.fill((255, 255, 255))
-        self.rect = self.image.get_rect()
-        HasCoordinates.__init__(self, tile_width, self.rect,
-                                ConfusedMovementHandlerStateDecorator(
-                                    BaseMovementHandlerState(), 10))
+        HasCoordinates.__init__(
+            self,
+            tile_width,
+            ConfusedMovementHandlerStateDecorator(BaseMovementHandlerState(), 10)
+        )
 
         self.next_level = 100
         self.basic_health = 100
         self.basic_strength = 10
 
         HasInventory.__init__(self, self.basic_health, self.basic_strength)
+
+    def generate_image(self):
+        image = pygame.Surface((tile_width, tile_width))
+        image.fill((255, 255, 255))
+        return image
 
     def on_pickup(self):
         pass

@@ -23,21 +23,20 @@ class ItemType(Enum):
     DEFENSIVE = 'defensive'
 
 
-class Item(pygame.sprite.Sprite, HasCoordinates):
-    def __init__(self, name, health_buff, strength_buff, image, item_type):
-        pygame.sprite.Sprite.__init__(self)
-
+class Item(HasCoordinates):
+    def __init__(self, name, health_buff, strength_buff, image_generator, item_type):
         self.name = name
 
-        self.image = image
-        self.rect = self.image.get_rect()
-
-        HasCoordinates.__init__(self, tile_width, self.rect)
+        self.image_generator = image_generator
+        HasCoordinates.__init__(self, tile_width)
 
         self.health_buff = health_buff
         self.strength_buff = strength_buff
 
         self.item_type = item_type
+
+    def generate_image(self):
+        return self.image_generator
 
 
 class ItemFactory:
@@ -67,8 +66,13 @@ class ItemFactory:
 
             strength = random.randint(0, max_buff)
 
-        return Item(name, health, strength,
-                    random.choice(images), item_type)
+        return Item(
+            name,
+            health,
+            strength,
+            random.choice(images),
+            item_type
+        )
 
     @staticmethod
     def create_offensive_item():

@@ -11,21 +11,20 @@ from src.util.config import tile_width
 from src.util.enums import Color
 
 
-class Mob(HasCoordinates, HasInventory,
-          pygame.sprite.Sprite):
+class Mob(HasCoordinates, HasInventory):
     def __init__(self, strategy, health, strength,
                  experience_from_killing, color):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = pygame.Surface((tile_width, tile_width))
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-
-        HasCoordinates.__init__(self, tile_width, self.rect)
+        self.color = color
+        HasCoordinates.__init__(self, tile_width)
         HasInventory.__init__(self, health, strength)
 
         self.strategy = strategy
         self.experience_from_killing = experience_from_killing
+
+    def generate_image(self):
+        image = pygame.Surface((tile_width, tile_width))
+        image.fill(self.color)
+        return image
 
     def get_next_turn(self, player_coordinates, world_graph):
         return self.strategy.get_next_move(world_graph, (self.x, self.y),
