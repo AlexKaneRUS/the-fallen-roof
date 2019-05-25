@@ -1,13 +1,13 @@
 # will be removed, just for simplicity
 
-from src.util.config import screen_height, screen_width, tile_width
+from src.util.config import height_in_tiles, width_in_tiles, tile_width
 from src.model.terrain.floor import Floor
 from src.model.terrain.wall import Wall
 import random
 
 def gen_terrain():
-    n = screen_height // tile_width
-    m = screen_width // tile_width
+    n = height_in_tiles
+    m = width_in_tiles
     terrain = [[None for i in range(n)] for j in range(m)]
     for i in range(n):
         for j in range(m):

@@ -3,8 +3,8 @@
 title = 'The Fallen Roof'
 
 # display settings
-screen_width = 800
-screen_height = 600
+width_in_tiles = 40
+height_in_tiles = 30
 tile_width = 20
 fps = 60
 turn_delay = 0

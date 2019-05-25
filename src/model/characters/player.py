@@ -3,7 +3,7 @@ import pygame
 from src.model.characters.has_inventory import HasInventory
 from src.model.can_move import CanMove, \
     BaseMovementHandlerState, ConfusedMovementHandlerStateDecorator
-from src.util.config import screen_height, screen_width, tile_width
+from src.util.config import height_in_tiles, width_in_tiles, tile_width
 from src.util.singleton import Singleton
 from src.model.has_image import HasImage
 
@@ -51,13 +51,13 @@ class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
         x = self.x
         y = self.y
 
-        if direction.contains_down() and self.rect.bottom < screen_height:
+        if direction.contains_down() and y < height_in_tiles:
             y += 1
-        if direction.contains_up() and self.rect.top > 0:
+        if direction.contains_up() and y > 0:
             y -= 1
-        if direction.contains_left() and self.rect.left > 0:
+        if direction.contains_left() and x > 0:
             x -= 1
-        if direction.contains_right() and self.rect.right < screen_width:
+        if direction.contains_right() and x < width_in_tiles:
             x += 1
 
         return x, y

@@ -9,8 +9,8 @@ import src.util.config as conf
 class FallenRoof(GameCore):
     def __init__(self):
         super().__init__(title=conf.title,
-                         screen_width=conf.screen_width,
-                         screen_height=conf.screen_height,
+                         screen_width=conf.width_in_tiles * conf.tile_width,
+                         screen_height=conf.height_in_tiles * conf.tile_width,
                          fps=conf.fps,
                          turn_delay=conf.turn_delay)
 
