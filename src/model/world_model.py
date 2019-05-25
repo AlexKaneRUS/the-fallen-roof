@@ -11,20 +11,6 @@ import src.model.terrain.gen_terrain as gt
 from src.util.enums import UserEvents
 
 
-class GraphRepr:
-    def __init__(self):
-        self.terrain = pygame.sprite.Group()
-        self.player = pygame.sprite.GroupSingle()
-        self.mobs = pygame.sprite.Group()
-        self.items = pygame.sprite.Group()
-
-    def draw(self, main_surface):
-        self.terrain.draw(main_surface)
-        self.player.draw(main_surface)
-        self.mobs.draw(main_surface)
-        self.items.draw(main_surface)
-
-
 class WorldModel:
     @staticmethod
     def generate():
@@ -54,15 +40,15 @@ class WorldModel:
         self.items = items
 
     def build_graph_repr(self):
-        graph_repr = GraphRepr()
+        graph_repr = pygame.sprite.Group()
         for col in self.location_terrain:
             for cell in col:
-                graph_repr.terrain.add(cell)
+                graph_repr.add(cell)
         for mob in self.mobs:
-            graph_repr.mobs.add(mob)
+            graph_repr.add(mob)
         for item in self.items:
-            graph_repr.items.add(item)
-        graph_repr.player.add(self.player)
+            graph_repr.add(item)
+        graph_repr.add(self.player)
         return graph_repr
 
     def do_ai_turn(self, graph_repr):
@@ -83,7 +69,7 @@ class WorldModel:
                 if not mob.is_alive():
                     self.world_graph[(mob.x, mob.y)].object = None
                     self.mobs.remove(mob)
-                    graph_repr.mobs.remove(mob)
+                    graph_repr.remove(mob)
 
                     self.player.add_experience(mob.experience_from_killing)
 
@@ -102,7 +88,7 @@ class WorldModel:
         def item_pickup_process(with_inventory: HasInventory, item: Item):
             self.world_graph[(item.x, item.y)].object = None
             self.items.remove(item)
-            graph_repr.items.remove(item)
+            graph_repr.remove(item)
 
             with_inventory.pickup_item(item)
 
