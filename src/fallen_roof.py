@@ -32,8 +32,7 @@ class FallenRoof(GameCore):
         self.world_model.do_ai_turn()
 
     def draw(self):
-        for group in self.world_model.graph_repr.values():
-            group.draw(self.main_surface)
+        self.world_model.graph_repr.draw(self.main_surface)
 
     def open_inventory(self):
         self.in_inventory = True

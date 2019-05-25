@@ -11,15 +11,24 @@ import src.model.terrain.gen_terrain as gt
 from src.util.enums import UserEvents
 
 
+class GraphRepr:
+    def __init__(self):
+        self.terrain = pygame.sprite.Group()
+        self.player = pygame.sprite.GroupSingle()
+        self.mobs = pygame.sprite.Group()
+        self.items = pygame.sprite.Group()
+
+    def draw(self, main_surface):
+        self.terrain.draw(main_surface)
+        self.player.draw(main_surface)
+        self.mobs.draw(main_surface)
+        self.items.draw(main_surface)
+
+
 class WorldModel:
     def __init__(self):
         # init graphic representation
-        self.graph_repr = {
-            'terrain': pygame.sprite.Group(),
-            'player': pygame.sprite.GroupSingle(),
-            'mobs': pygame.sprite.Group(),
-            'items': pygame.sprite.Group(),
-        }
+        self.graph_repr = GraphRepr()
 
         self.location_terrain = gt.gen_terrain()
         self.world_graph = self.terrain_to_world_graph(self.location_terrain)
@@ -29,19 +38,19 @@ class WorldModel:
 
         for col in self.location_terrain:
             for cell in col:
-                self.graph_repr['terrain'].add(cell)
+                self.graph_repr.terrain.add(cell)
 
         self.mobs = MobFactory.create_random_mobs(20)
         for mob in self.mobs:
             self.spawn_object_and_update_graph(mob)
-            self.graph_repr['mobs'].add(mob)
+            self.graph_repr.mobs.add(mob)
 
         self.items = ItemFactory.create_random_items(100)
         for item in self.items:
             self.spawn_object_and_update_graph(item)
-            self.graph_repr['items'].add(item)
+            self.graph_repr.items.add(item)
 
-        self.graph_repr['player'].add(self.player)
+        self.graph_repr.player.add(self.player)
 
     def do_ai_turn(self):
         for mob in self.mobs:
@@ -59,7 +68,7 @@ class WorldModel:
         if not mob.is_alive():
             self.world_graph[(mob.x, mob.y)].object = None
             self.mobs.remove(mob)
-            self.graph_repr['mobs'].remove(mob)
+            self.graph_repr.mobs.remove(mob)
 
             self.player.add_experience(mob.experience_from_killing)
 
@@ -110,7 +119,7 @@ class WorldModel:
     def _item_pickup_process(self, with_inventory: HasInventory, item: Item):
         self.world_graph[(item.x, item.y)].object = None
         self.items.remove(item)
-        self.graph_repr['items'].remove(item)
+        self.graph_repr.items.remove(item)
 
         with_inventory.pickup_item(item)
 
