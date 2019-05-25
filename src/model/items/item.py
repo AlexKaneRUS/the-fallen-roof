@@ -7,7 +7,6 @@ import pygame
 from src.model.has_coordinates import HasCoordinates
 from src.util.config import tile_width
 
-items_resources_path = 'model/items/resources'
 max_buff = 10
 
 offensive_item_prefixes = ['Sword', 'Gun', 'Cannon', 'Knife']
@@ -47,7 +46,7 @@ class Item(pygame.sprite.Sprite, HasCoordinates):
 class ItemFactory:
     @staticmethod
     def _create_item(item_type):
-        path = os.path.join(items_resources_path, item_type.value)
+        path = os.path.join(os.path.dirname(__file__), "resources", item_type.value)
         images = [
             pygame.transform.scale(pygame.image.load(os.path.join(path, x)),
                                    (tile_width, tile_width))
