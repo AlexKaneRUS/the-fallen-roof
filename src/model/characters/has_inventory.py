@@ -58,6 +58,7 @@ class HasInventory(ABC, HasBattleSystem):
             def __init__(self, j, inv, new_game_command):
                 self.j = j
                 self.inv = inv
+                self.new_game_command = new_game_command
 
             def __call__(self):
                 if self.j in self.inv.player.equipped_items:
@@ -65,7 +66,7 @@ class HasInventory(ABC, HasBattleSystem):
                 else:
                     self.inv.player.equip_item(self.j)
                 self.inv.reinit(self.inv.rect.topleft[0], self.inv.rect.topleft[1], self.inv.rect.width,
-                                self.inv.rect.height)
+                                self.inv.rect.height, self.new_game_command)
                 pygame.event.post(pygame.event.Event(UserEvents.EMPTY, {}))
 
         def _draw_items(self, bot_left_txt, new_game_command):
