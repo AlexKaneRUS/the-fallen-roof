@@ -7,7 +7,7 @@ from src.model.can_move import CanMove, \
     ConfusedMovementHandlerStateDecorator
 from src.model.characters.mobs.strategy import AggressiveStrategy, \
     FrightenedStrategy, PassiveStrategy
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
 from src.util.enums import Color
 from src.model.has_image import HasImage
 
@@ -24,7 +24,7 @@ class Mob(CanMove, HasImage, HasInventory):
         self.experience_from_killing = experience_from_killing
 
     def generate_image(self):
-        image = pygame.Surface((tile_width, tile_width))
+        image = pygame.Surface((TILE_WIDTH, TILE_WIDTH))
         image.fill(self.color)
         return image
 

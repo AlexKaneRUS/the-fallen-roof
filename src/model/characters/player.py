@@ -3,7 +3,7 @@ import pygame
 from src.model.characters.has_inventory import HasInventory
 from src.model.can_move import CanMove, \
     BaseMovementHandlerState, ConfusedMovementHandlerStateDecorator
-from src.util.config import height_in_tiles, width_in_tiles, tile_width
+from src.util.config import HEIGHT_IN_TILES, WIDTH_IN_TILES, TILE_WIDTH
 from src.util.singleton import Singleton
 from src.model.has_image import HasImage
 
@@ -23,7 +23,7 @@ class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
         HasInventory.__init__(self, self.basic_health, self.basic_strength)
 
     def generate_image(self):
-        image = pygame.Surface((tile_width, tile_width))
+        image = pygame.Surface((TILE_WIDTH, TILE_WIDTH))
         image.fill((255, 255, 255))
         return image
 
@@ -51,13 +51,13 @@ class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
         x = self.x
         y = self.y
 
-        if direction.contains_down() and y < height_in_tiles:
+        if direction.contains_down() and y < HEIGHT_IN_TILES:
             y += 1
         if direction.contains_up() and y > 0:
             y -= 1
         if direction.contains_left() and x > 0:
             x -= 1
-        if direction.contains_right() and x < width_in_tiles:
+        if direction.contains_right() and x < WIDTH_IN_TILES:
             x += 1
 
         return x, y

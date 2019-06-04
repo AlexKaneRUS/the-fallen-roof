@@ -1,6 +1,6 @@
 import pygame
 from abc import ABC, abstractmethod
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
 from src.model.has_image import HasImage
 
 
@@ -12,11 +12,11 @@ class Terrain(HasImage, ABC):
         HasImage.__init__(self)
 
     def generate_image(self):
-        image = pygame.Surface((tile_width, tile_width))
+        image = pygame.Surface((TILE_WIDTH, TILE_WIDTH))
         image.fill(self.color)
         return image
 
 
     @abstractmethod
-    def isPassable(self):
+    def is_passable(self):
         pass

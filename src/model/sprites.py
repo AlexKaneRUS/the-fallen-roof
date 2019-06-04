@@ -1,5 +1,5 @@
 import pygame
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
 
 
 class Sprites:
@@ -16,7 +16,7 @@ class Sprites:
     def add(self, has_image):
         self.indexed_sprites[has_image] = Sprites.Sprite(
             has_image.generate_image(),
-            (has_image.x * tile_width, has_image.y * tile_width)
+            (has_image.x * TILE_WIDTH, has_image.y * TILE_WIDTH)
         )
         self.group.add(self.indexed_sprites[has_image])
 

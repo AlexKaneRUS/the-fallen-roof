@@ -5,7 +5,7 @@ from enum import Enum
 import pygame
 
 from src.model.has_image import HasImage
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
 
 max_buff = 10
 
@@ -46,7 +46,7 @@ class ItemFactory:
             self.path = path
 
         def __call__(self):
-            return pygame.transform.scale(pygame.image.load(self.path), (tile_width, tile_width))
+            return pygame.transform.scale(pygame.image.load(self.path), (TILE_WIDTH, TILE_WIDTH))
 
     @staticmethod
     def random_image_generator(item_type):

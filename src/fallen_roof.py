@@ -12,11 +12,11 @@ import os.path
 
 class FallenRoof(GameCore):
     def __init__(self):
-        super().__init__(title=conf.title,
-                         screen_width=conf.width_in_tiles * conf.tile_width,
-                         screen_height=conf.height_in_tiles * conf.tile_width,
-                         fps=conf.fps,
-                         turn_delay=conf.turn_delay)
+        super().__init__(title=conf.TITLE,
+                         screen_width=conf.WIDTH_IN_TILES * conf.TILE_WIDTH,
+                         screen_height=conf.HEIGHT_IN_TILES * conf.TILE_WIDTH,
+                         fps=conf.FPS,
+                         turn_delay=conf.TURN_DELAY)
 
         self.init_world_model()
         self.keyboard_handler = KeyboardHandler(
@@ -37,7 +37,7 @@ class FallenRoof(GameCore):
 
     def do_ai_turn(self):
         self.world_model.do_ai_turn(self.sprites)
-        with open(conf.save_file_path, "wb") as file:
+        with open(conf.SAVE_FILE_PATH, "wb") as file:
             pickle.dump(self.world_model, file)
 
     def draw(self):
@@ -73,12 +73,12 @@ class FallenRoof(GameCore):
         self.remove_save_file()
 
     def remove_save_file(self):
-        if os.path.isfile(conf.save_file_path):
-            os.remove(conf.save_file_path)
+        if os.path.isfile(conf.SAVE_FILE_PATH):
+            os.remove(conf.SAVE_FILE_PATH)
 
     def init_world_model(self):
-        if os.path.isfile(conf.save_file_path):
-            with open(conf.save_file_path, "rb") as file:
+        if os.path.isfile(conf.SAVE_FILE_PATH):
+            with open(conf.SAVE_FILE_PATH, "rb") as file:
                 self.world_model = pickle.load(file)
         else:
             self.world_model = WorldModel.generate(read_terrain("map.XY") or gen_terrain())

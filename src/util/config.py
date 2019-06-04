@@ -1,11 +1,12 @@
 # game settings
 
-title = 'The Fallen Roof'
+TITLE = 'The Fallen Roof'
 
 # display settings
-width_in_tiles = 40
-height_in_tiles = 30
-tile_width = 20
-fps = 60
-turn_delay = 0
-save_file_path = ".save.pickle"
+WIDTH_IN_TILES = 40
+HEIGHT_IN_TILES = 30
+TILE_WIDTH = 20
+FPS = 60
+TURN_DELAY = 0
+
+SAVE_FILE_PATH = ".save.pickle"

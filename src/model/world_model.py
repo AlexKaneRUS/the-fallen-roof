@@ -8,7 +8,7 @@ from src.model.characters.player import Player
 from src.model.items.item import Item, ItemFactory
 from src.model.sprites import Sprites
 from src.model.world_graph_node import WorldGraphNode
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
 from src.util.enums import UserEvents
 
 
@@ -119,18 +119,18 @@ class WorldModel:
             self.world_graph[(obj.x, obj.y)].object = None
 
             obj.x, obj.y = next_move
-            sprites.get_rect(obj).topleft = (obj.x * tile_width, obj.y * tile_width)
+            sprites.get_rect(obj).topleft = (obj.x * TILE_WIDTH, obj.y * TILE_WIDTH)
             self.world_graph[next_move].object = obj
 
     @staticmethod
     def terrain_to_world_graph(map):
         def good_dir(dir):
             x, y = dir
-            return 0 <= y < len(map) and 0 <= x < len(map[y]) and map[y][x].isPassable()
+            return 0 <= y < len(map) and 0 <= x < len(map[y]) and map[y][x].is_passable()
 
         return {
             (x, y): WorldGraphNode(list(filter(good_dir, [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])))
             for y, row in enumerate(map)
             for x, terrain in enumerate(row)
-            if terrain.isPassable()
+            if terrain.is_passable()
         }
