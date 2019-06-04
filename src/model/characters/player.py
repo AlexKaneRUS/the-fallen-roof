@@ -9,6 +9,13 @@ from src.util.singleton import Singleton
 
 class Player(HasCoordinates, HasBattleSystem, pygame.sprite.Sprite,
              metaclass=Singleton):
+    """
+    Class representing player in the game.
+
+    Player inherits HasCoordinates, so it can be moved.
+    Player inherits HasBattleSystem, so it can fight with Mobs.
+    """
+
     def __init__(self, world_graph):
         pygame.sprite.Sprite.__init__(self)
 
