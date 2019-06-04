@@ -1,6 +1,8 @@
 import pygame
 from src.game_core import GameCore
 from src.handlers.keyboard_handler import KeyboardHandler
+from src.model.terrain.gen_terrain import gen_terrain
+from src.model.terrain.read_terrain import read_terrain
 from src.model.world_model import WorldModel
 from src.util.enums import TurnOwner
 import src.util.config as conf
@@ -79,6 +81,6 @@ class FallenRoof(GameCore):
             with open(conf.save_file_path, "rb") as file:
                 self.world_model = pickle.load(file)
         else:
-            self.world_model = WorldModel.generate()
+            self.world_model = WorldModel.generate(read_terrain("map.XY") or gen_terrain())
         # init graphic representation
         self.sprites = self.world_model.build_sprites()

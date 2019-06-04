@@ -4,34 +4,38 @@ import pygame
 
 from src.model.characters.has_inventory import HasInventory
 from src.model.characters.mobs.mob import Mob, MobFactory
-from src.model.items.item import Item, ItemFactory
-from src.model.world_graph_node import WorldGraphNode
 from src.model.characters.player import Player
-import src.model.terrain.gen_terrain as gt
-from src.util.enums import UserEvents
-from src.util.config import tile_width
+from src.model.items.item import Item, ItemFactory
 from src.model.sprites import Sprites
+from src.model.world_graph_node import WorldGraphNode
+from src.util.config import tile_width
+from src.util.enums import UserEvents
 
 
 class WorldModel:
     @staticmethod
-    def generate():
-        terrain = gt.gen_terrain()
+    def generate(terrain):
         world_graph = WorldModel.terrain_to_world_graph(terrain)
 
         def spawn_object_and_update_graph(obj):
             possible_poss = list(filter(lambda x: world_graph[x].object is None, world_graph.keys()))
-            obj.x, obj.y = random.choice(possible_poss)
-            world_graph[(obj.x, obj.y)].object = obj
+            if possible_poss:
+                obj.x, obj.y = random.choice(possible_poss)
+                world_graph[(obj.x, obj.y)].object = obj
+                return True
 
         player = Player()
         spawn_object_and_update_graph(player)
-        mobs = MobFactory.create_random_mobs(20)
-        for mob in mobs:
-            spawn_object_and_update_graph(mob)
-        items = ItemFactory.create_random_items(100)
-        for item in items:
-            spawn_object_and_update_graph(item)
+        mobs = [
+            mob
+            for mob in MobFactory.create_random_mobs(20)
+            if spawn_object_and_update_graph(mob)
+        ]
+        items = [
+            item
+            for item in ItemFactory.create_random_items(100)
+            if spawn_object_and_update_graph(item)
+        ]
         return WorldModel(terrain, world_graph, player, mobs, items)
 
     def __init__(self, terrain, world_graph, player, mobs, items):
@@ -119,22 +123,14 @@ class WorldModel:
             self.world_graph[next_move].object = obj
 
     @staticmethod
-    def terrain_to_world_graph(terrain):
-        world_graph = {}
-        for i in range(len(terrain)):
-            for j in range(len(terrain[i])):
-                if terrain[i][j].isPassable():
-                    possible_directions = [(i - 1, j), (i + 1, j), (i, j - 1),
-                                           (i, j + 1)]
+    def terrain_to_world_graph(map):
+        def good_dir(dir):
+            x, y = dir
+            return 0 <= y < len(map) and 0 <= x < len(map[y]) and map[y][x].isPassable()
 
-                    def good_dir(d):
-                        x, y = d
-                        return 0 <= x < len(terrain) and 0 <= y < len(
-                            terrain[i]) and \
-                               terrain[x][y].isPassable()
-
-                    world_graph[(i, j)] = WorldGraphNode(
-                        list(filter(lambda x: good_dir(x),
-                                    possible_directions)))
-
-        return world_graph
+        return {
+            (x, y): WorldGraphNode(list(filter(good_dir, [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])))
+            for y, row in enumerate(map)
+            for x, terrain in enumerate(row)
+            if terrain.isPassable()
+        }
