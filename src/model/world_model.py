@@ -69,58 +69,50 @@ class WorldModel:
         if not self.player.is_alive():
             pygame.event.post(pygame.event.Event(UserEvents.GAME_OVER, {}))
 
-    def move_logic(self, obj, next_move, sprites):
-        def battle_process(obj, other_obj):
-            def check_mob(mob):
-                if not mob.is_alive():
-                    self.world_graph[(mob.x, mob.y)].object = None
-                    self.mobs.remove(mob)
-                    sprites.remove(mob)
+    def move_logic(self, movable, next_move, sprites):
+        def check_mob(mob):
+            if not mob.is_alive():
+                self.world_graph[(mob.x, mob.y)].object = None
+                self.mobs.remove(mob)
+                sprites.remove(mob)
 
-                    self.player.add_experience(mob.experience_from_killing)
+                self.player.add_experience(mob.experience_from_killing)
 
-            obj.attack(other_obj)
-            other_obj.damage(obj.strength)
-            other_obj.attack(obj)
-            obj.damage(other_obj.strength)
+        def battle_process(defendant):
+            movable.attack(defendant)
+            defendant.damage(movable.strength)
+            defendant.attack(movable)
+            movable.damage(defendant.strength)
 
             self.check_player()
+            check_mob(movable if isinstance(movable, Mob) else defendant)
 
-            if issubclass(obj.__class__, Mob):
-                check_mob(obj)
-            else:
-                check_mob(other_obj)
-
-        def item_pickup_process(with_inventory: HasInventory, item: Item):
+        def item_pickup_process(item: Item):
             self.world_graph[(item.x, item.y)].object = None
             self.items.remove(item)
             sprites.remove(item)
 
-            with_inventory.pickup_item(item)
+            movable.pickup_item(item)
 
-        def collision_process(obj, other_obj):
-            if isinstance(obj, Player) and issubclass(other_obj.__class__,
-                                                      Mob) or issubclass(
-                obj.__class__, Mob) and isinstance(other_obj, Player):
-                battle_process(obj, other_obj)
-            elif isinstance(obj, Player) and isinstance(other_obj,
-                                                        Item) or issubclass(
-                obj.__class__, Mob) and isinstance(other_obj, Item):
-                item_pickup_process(obj, other_obj)
+        def collision_process(collidee):
+            if collidee is None:
+                return
+            if isinstance(movable, Player) and isinstance(collidee, Mob) \
+                    or isinstance(movable, Mob) and isinstance(collidee, Player):
+                battle_process(collidee)
+            elif isinstance(collidee, Item) and (isinstance(movable, Player) or isinstance(movable, Mob)):
+                item_pickup_process(collidee)
 
         if next_move not in self.world_graph.keys():
-            next_move = (obj.x, obj.y)
-        other_obj = self.world_graph[next_move].object
-
-        if other_obj is not None:
-            collision_process(obj, other_obj)
+            next_move = (movable.x, movable.y)
+        collision_process(self.world_graph[next_move].object)
 
         if self.world_graph[next_move].object is None:
-            self.world_graph[(obj.x, obj.y)].object = None
+            self.world_graph[(movable.x, movable.y)].object = None
 
-            obj.x, obj.y = next_move
-            sprites.get_rect(obj).topleft = (obj.x * TILE_WIDTH, obj.y * TILE_WIDTH)
-            self.world_graph[next_move].object = obj
+            movable.x, movable.y = next_move
+            sprites.get_rect(movable).topleft = (movable.x * TILE_WIDTH, movable.y * TILE_WIDTH)
+            self.world_graph[next_move].object = movable
 
     @staticmethod
     def terrain_to_world_graph(map):

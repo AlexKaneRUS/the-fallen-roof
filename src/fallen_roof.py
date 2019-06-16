@@ -1,6 +1,7 @@
 import pygame
 from src.game_core import GameCore
 from src.handlers.keyboard_handler import KeyboardHandler
+from src.model.characters.inventory import Inventory
 from src.model.terrain.gen_terrain import gen_terrain
 from src.model.terrain.read_terrain import read_terrain
 from src.model.world_model import WorldModel
@@ -51,7 +52,7 @@ class FallenRoof(GameCore):
             self.init_world_model()
             self.close_inventory()
 
-        inv = self.world_model.player.Inventory(
+        inv = Inventory(
             self.world_model.player,
             x=(self.background.get_width() - 500) / 2,
             y=(self.background.get_height() - 400) / 2,
@@ -65,7 +66,7 @@ class FallenRoof(GameCore):
         self.in_inventory = False
 
         self.to_draw = list(filter(
-            lambda x: not isinstance(x, self.world_model.player.Inventory),
+            lambda x: not isinstance(x, Inventory),
             self.to_draw))
 
     def run(self):

@@ -9,14 +9,6 @@ from src.util.config import TILE_WIDTH
 
 max_buff = 10
 
-offensive_item_prefixes = ['Sword', 'Gun', 'Cannon', 'Knife']
-offensive_item_suffixes = ['of infinite power', 'of wisdom', 'of Great Day',
-                           'of fun', 'of friendship']
-
-defensive_item_prefixes = ['Shield', 'Armor', 'Helmet', 'Jacket']
-defensive_item_suffixes = ['of good defense', 'of love', 'the Defender',
-                           'the Cool Guy', 'Good Boy']
-
 
 class ItemType(Enum):
     OFFENSIVE = 'offensive'
@@ -41,6 +33,14 @@ class Item(HasImage):
 
 
 class ItemFactory:
+    OFFENSIVE_ITEM_PREFIXES = ['Sword', 'Gun', 'Cannon', 'Knife']
+    OFFENSIVE_ITEM_SUFFIXES = ['of infinite power', 'of wisdom', 'of Great Day',
+                               'of fun', 'of friendship']
+
+    DEFENSIVE_ITEM_PREFIXES = ['Shield', 'Armor', 'Helmet', 'Jacket']
+    DEFENSIVE_ITEM_SUFFIXES = ['of good defense', 'of love', 'the Defender',
+                               'the Cool Guy', 'Good Boy']
+
     class ImageGenerator:
         def __init__(self, path):
             self.path = path
@@ -62,14 +62,14 @@ class ItemFactory:
 
         if item_type == ItemType.DEFENSIVE:
             name = random.choice(
-                defensive_item_prefixes) + ' ' + random.choice(
-                defensive_item_suffixes)
+                ItemFactory.DEFENSIVE_ITEM_PREFIXES) + ' ' + random.choice(
+                ItemFactory.DEFENSIVE_ITEM_SUFFIXES)
 
             health = random.randint(0, max_buff)
         elif item_type == ItemType.OFFENSIVE:
             name = random.choice(
-                offensive_item_prefixes) + ' ' + random.choice(
-                offensive_item_suffixes)
+                ItemFactory.OFFENSIVE_ITEM_PREFIXES) + ' ' + random.choice(
+                ItemFactory.OFFENSIVE_ITEM_SUFFIXES)
 
             strength = random.randint(0, max_buff)
 
