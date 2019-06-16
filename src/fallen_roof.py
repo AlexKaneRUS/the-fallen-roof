@@ -7,7 +7,13 @@ import src.util.config as conf
 
 
 class FallenRoof(GameCore):
+    '''
+    FallenRoof object, specifying GameCore methods
+    '''
     def __init__(self):
+        """
+        Initializes GameCore, graphical representation and keyboard handler.
+        """
         super().__init__(title=conf.title,
                          screen_width=conf.screen_width,
                          screen_height=conf.screen_height,
@@ -19,10 +25,18 @@ class FallenRoof(GameCore):
         self.keyboard_handler = KeyboardHandler(self.world_model)
 
     def _init_graphic_repr(self):
+        """
+        Initializes graphic representation.
+        """
         self.groups['terrain'] = pygame.sprite.Group()
         self.groups['player'] = pygame.sprite.GroupSingle()
 
     def process_player_action(self):
+        """
+        Handles player's keyboard actions.
+
+        :return: TurnOwner object
+        """
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             pygame.event.post(pygame.event.Event(pygame.QUIT))

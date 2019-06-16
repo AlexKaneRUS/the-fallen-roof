@@ -1,4 +1,7 @@
 class Singleton(type):
+    '''
+    Singleton metaclass.
+    '''
     def __new__(cls, name, base, attrs):
         attrs['_Singleton__instance'] = None
         return super().__new__(cls, name, base, attrs)
