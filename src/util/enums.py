@@ -44,12 +44,6 @@ class Direction(Enum):
         return self == Direction.LEFT or self == Direction.UP_LEFT or self == Direction.DOWN_LEFT
 
 
-class Location(Enum):
-    KT = 0
-    RF = 1
-    EP = 2
-
-
 class UserEvents(IntEnum):
     GAME_OVER = pygame.USEREVENT + 1
     EMPTY = pygame.USEREVENT + 2

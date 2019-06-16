@@ -10,6 +10,7 @@ from src.model.sprites import Sprites
 from src.model.world_graph_node import WorldGraphNode
 from src.util.config import TILE_WIDTH
 from src.util.enums import UserEvents
+from typing import List, Set, Dict, Tuple, Optional
 
 
 class WorldModel:
@@ -37,6 +38,9 @@ class WorldModel:
             if spawn_object_and_update_graph(item)
         ]
         return WorldModel(terrain, world_graph, player, mobs, items)
+
+    world_graph: Dict[Tuple[int, int], WorldGraphNode]
+    player: Player
 
     def __init__(self, terrain, world_graph, player, mobs, items):
         self.location_terrain = terrain
