@@ -1,10 +1,11 @@
 import pygame
 from src.util.enums import Direction
-from src.util.config import screen_height, screen_width, tile_width
+import src.util.config as config
+from src.util.config import tile_width
 from src.util.singleton import Singleton
 
 
-class Player(pygame.sprite.Sprite, metaclass=Singleton):
+class Player(pygame.sprite.Sprite):
     '''
     Player object.
     '''
@@ -23,7 +24,7 @@ class Player(pygame.sprite.Sprite, metaclass=Singleton):
         :param dir: Movement direction.
         :param terrain: Terrain map.
         """
-        if dir == Direction.DOWN and self.rect.bottom < screen_height:
+        if dir == Direction.DOWN and self.rect.bottom < config.screen_height:
             if terrain[self.x][self.y + 1].is_passable():
                 self.y += 1
                 self.rect.move_ip(0, tile_width)
@@ -35,7 +36,7 @@ class Player(pygame.sprite.Sprite, metaclass=Singleton):
             if terrain[self.x - 1][self.y].is_passable():
                 self.x -= 1
                 self.rect.move_ip(-tile_width, 0)
-        if dir == Direction.RIGHT and self.rect.right < screen_width:
+        if dir == Direction.RIGHT and self.rect.right < config.screen_width:
             if terrain[self.x + 1][self.y].is_passable():
                 self.x += 1
                 self.rect.move_ip(tile_width, 0)
