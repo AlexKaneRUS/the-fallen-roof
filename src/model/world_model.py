@@ -2,105 +2,146 @@ import random
 
 import pygame
 
+from src.model.characters.has_inventory import HasInventory
 from src.model.characters.mobs.mob import Mob, MobFactory
-from src.model.world_graph_node import WorldGraphNode
 from src.model.characters.player import Player
-import src.model.terrain.gen_terrain as gt
+from src.model.items.item import Item, ItemFactory
+from src.model.sprites import Sprites
+from src.model.world_graph_node import WorldGraphNode
+from src.util.config import TILE_WIDTH
 from src.util.enums import UserEvents
+from typing import List, Set, Dict, Tuple, Optional
 
 
 class WorldModel:
-    def __init__(self, graph_repr):
+    @staticmethod
+    def generate(terrain):
+        world_graph = WorldModel.terrain_to_world_graph(terrain)
 
-        # actual state
-        self.graph_repr = graph_repr
-        self.current_location = None
+        def spawn_object_and_update_graph(obj):
+            possible_poss = list(filter(lambda x: world_graph[x].object is None, world_graph.keys()))
+            if possible_poss:
+                obj.x, obj.y = random.choice(possible_poss)
+                world_graph[(obj.x, obj.y)].object = obj
+                return True
 
-        self.location_terrain = gt.gen_terrain()
-        self.world_graph = self.terrain_to_world_graph(self.location_terrain)
+        player = Player()
+        spawn_object_and_update_graph(player)
+        mobs = [
+            mob
+            for mob in MobFactory.create_random_mobs(20)
+            if spawn_object_and_update_graph(mob)
+        ]
+        items = [
+            item
+            for item in ItemFactory.create_random_items(100)
+            if spawn_object_and_update_graph(item)
+        ]
+        return WorldModel(terrain, world_graph, player, mobs, items)
 
-        self.player = Player(self.world_graph)
-        self.spawn_object_and_update_graph(self.player)
+    world_graph: Dict[Tuple[int, int], WorldGraphNode]
+    player: Player
 
+    def __init__(self, terrain, world_graph, player, mobs, items):
+        self.location_terrain = terrain
+        self.world_graph = world_graph
+        self.player = player
+        self.mobs = mobs
+        self.items = items
+
+    def build_sprites(self):
+        sprites = Sprites()
         for col in self.location_terrain:
             for cell in col:
-                self.graph_repr['terrain'].add(cell)
-
-        self.mobs = MobFactory.create_random_mobs(self.world_graph, 10)
+                sprites.add(cell)
         for mob in self.mobs:
-            self.spawn_object_and_update_graph(mob)
-            self.graph_repr['mobs'].add(mob)
+            sprites.add(mob)
+        for item in self.items:
+            sprites.add(item)
+        sprites.add(self.player)
+        return sprites
 
-        self.graph_repr['player'].add(self.player)
-
-    def do_ai_turn(self):
+    def do_ai_turn(self, sprites):
         for mob in self.mobs:
-            next_move = mob.get_next_turn((self.player.x, self.player.y))
-            self.move_logic(mob, next_move)
+            self.move_logic(mob, mob.get_next_turn((self.player.x, self.player.y), self.world_graph), sprites)
         pygame.event.pump()
 
-    def move_player(self, dir):
-        next_move = self.player.get_next_turn(dir)
-        self.move_logic(self.player, next_move)
+    def move_player(self, dir, sprites):
+        self.move_logic(self.player, self.player.get_next_turn(dir), sprites)
 
     def check_player(self):
         if not self.player.is_alive():
             pygame.event.post(pygame.event.Event(UserEvents.GAME_OVER, {}))
 
-    def check_mob(self, mob):
-        if not mob.is_alive():
-            self.world_graph[(mob.x, mob.y)].object = None
-            self.mobs.remove(mob)
-            self.graph_repr['mobs'].remove(mob)
+    def move_logic(self, movable, next_move, sprites):
+        def check_mob(mob):
+            if not mob.is_alive():
+                self.world_graph[(mob.x, mob.y)].object = None
+                self.mobs.remove(mob)
+                sprites.remove(mob)
 
-    def spawn_object_and_update_graph(self, obj):
-        possible_poss = list(
-            filter(lambda x: self.world_graph[x].object is None,
-                   self.world_graph.keys()))
-        obj.set_coordinates(random.choice(possible_poss))
-        self.world_graph[(obj.x, obj.y)].object = obj
+                self.player.add_experience(mob.experience_from_killing)
 
-    def move_logic(self, obj, next_move):
-        other_obj = self.world_graph[next_move].object
-        if other_obj is not None and (
-                (isinstance(obj, Player) and issubclass(other_obj.__class__,
-                                                        Mob)) or (
-                        issubclass(obj.__class__, Mob) and isinstance(
-                    other_obj, Player))):
-            obj.attack(other_obj)
-            other_obj.damage(obj.strength)
-            other_obj.attack(obj)
-            obj.damage(other_obj.strength)
+        def battle_process(defendant):
+            movable.attack(defendant)
+            defendant.damage(movable.strength)
+            defendant.attack(movable)
+            movable.damage(defendant.strength)
 
             self.check_player()
+            check_mob(movable if isinstance(movable, Mob) else defendant)
 
-            if issubclass(obj.__class__, Mob):
-                self.check_mob(obj)
-            else:
-                self.check_mob(other_obj)
+        def item_pickup_process(item: Item):
+            self.world_graph[(item.x, item.y)].object = None
+            self.items.remove(item)
+            sprites.remove(item)
+
+            movable.pickup_item(item)
+
+        def collision_process(collidee):
+            if collidee is None:
+                return
+            if isinstance(movable, Player) and isinstance(collidee, Mob) \
+                    or isinstance(movable, Mob) and isinstance(collidee, Player):
+                battle_process(collidee)
+            elif isinstance(collidee, Item) and (isinstance(movable, Player) or isinstance(movable, Mob)):
+                item_pickup_process(collidee)
+
+        if next_move not in self.world_graph.keys():
+            next_move = (movable.x, movable.y)
+        collision_process(self.world_graph[next_move].object)
 
         if self.world_graph[next_move].object is None:
-            self.world_graph[(obj.x, obj.y)].object = None
+            self.world_graph[(movable.x, movable.y)].object = None
 
-            obj.set_coordinates(next_move)
-            self.world_graph[next_move].object = obj
+            movable.x, movable.y = next_move
+            sprites.get_rect(movable).topleft = (movable.x * TILE_WIDTH, movable.y * TILE_WIDTH)
+            self.world_graph[next_move].object = movable
 
-    def terrain_to_world_graph(self, terrain):
-        world_graph = {}
-        for i in range(len(terrain)):
-            for j in range(len(terrain[i])):
-                if terrain[i][j].isPassable():
-                    possible_directions = [(i - 1, j), (i + 1, j), (i, j - 1),
-                                           (i, j + 1)]
+    @staticmethod
+    def terrain_to_world_graph(map):
+        def good_dir(dir):
+            x, y = dir
+            return 0 <= y < len(map) and 0 <= x < len(map[y]) and map[y][x].is_passable()
 
-                    def good_dir(d):
-                        x, y = d
-                        return 0 <= x < len(terrain) and 0 <= y < len(
-                            terrain[i]) and \
-                               terrain[x][y].isPassable()
+        return {
+            (x, y): WorldGraphNode(list(filter(good_dir, [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])))
+            for y, row in enumerate(map)
+            for x, terrain in enumerate(row)
+            if terrain.is_passable()
+        }
 
-                    world_graph[(i, j)] = WorldGraphNode(
-                        list(filter(lambda x: good_dir(x),
-                                    possible_directions)))
+    def get_player_characteristics(self):
+        return {
+            'Health': self.player.get_health(),
+            'Strength': self.player.get_strength(),
+            'Level': self.player.get_level(),
+            'Experience': self.player.get_experience(),
+            'Needed experience': self.player.get_next_level_experience()
+        }
 
-        return world_graph
+    def get_player_position(self):
+        return self.player.get_position()
+
+    def get_player_name(self):
+        return self.player.name

@@ -1,0 +1,1 @@
+script: python -m unittest tests/model/terrain/test_read_terrain.py

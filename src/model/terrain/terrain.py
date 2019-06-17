@@ -1,15 +1,22 @@
 import pygame
 from abc import ABC, abstractmethod
-from src.util.config import tile_width
+from src.util.config import TILE_WIDTH
+from src.model.has_image import HasImage
 
 
-class Terrain(ABC, pygame.sprite.Sprite):
+class Terrain(HasImage, ABC):
     def __init__(self, x, y, image=None, color=(255, 255, 255)):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((tile_width, tile_width))
-        self.image.fill(color)
-        self.rect = self.image.get_rect(topleft=(x * tile_width, y * tile_width))
+        self.x = x
+        self.y = y
+        self.color = color
+        HasImage.__init__(self)
+
+    def generate_image(self):
+        image = pygame.Surface((TILE_WIDTH, TILE_WIDTH))
+        image.fill(self.color)
+        return image
+
 
     @abstractmethod
-    def isPassable(self):
+    def is_passable(self):
         pass

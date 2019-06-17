@@ -2,6 +2,17 @@ import pygame
 from enum import Enum, IntEnum
 
 
+class Color(Enum):
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    GREY = (128, 128, 128)
+    BROWN = (174, 152, 105)
+    YELLOW = (205, 216, 55)
+
+
 class TurnOwner(Enum):
     PLAYER_TURN = 1
     AI_TURN = 0
@@ -33,11 +44,6 @@ class Direction(Enum):
         return self == Direction.LEFT or self == Direction.UP_LEFT or self == Direction.DOWN_LEFT
 
 
-class Location(Enum):
-    KT = 0
-    RF = 1
-    EP = 2
-
-
 class UserEvents(IntEnum):
     GAME_OVER = pygame.USEREVENT + 1
+    EMPTY = pygame.USEREVENT + 2
