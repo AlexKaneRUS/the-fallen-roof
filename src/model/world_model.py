@@ -130,3 +130,18 @@ class WorldModel:
             for x, terrain in enumerate(row)
             if terrain.is_passable()
         }
+
+    def get_player_characteristics(self):
+        return {
+            'Health': self.player.get_health(),
+            'Strength': self.player.get_strength(),
+            'Level': self.player.get_level(),
+            'Experience': self.player.get_experience(),
+            'Needed experience': self.player.get_next_level_experience()
+        }
+
+    def get_player_position(self):
+        return self.player.get_position()
+
+    def get_player_name(self):
+        return self.player.name

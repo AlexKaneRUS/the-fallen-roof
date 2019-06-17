@@ -28,3 +28,4 @@ class HasBattleSystem:
     @abstractmethod
     def level_up(self):
         pass
+

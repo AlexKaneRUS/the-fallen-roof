@@ -8,6 +8,9 @@ class CanMove(ABC):
         self.y = y
         self.movement_handler_state = movement_handler_state
 
+    def get_position(self):
+        return (self.x, self.y)
+
 
 class BaseMovementHandlerState:
     def __init__(self):

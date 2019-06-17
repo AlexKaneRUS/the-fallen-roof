@@ -5,7 +5,7 @@ from src.model.characters.inventory import Inventory
 from src.model.terrain.gen_terrain import gen_terrain
 from src.model.terrain.read_terrain import read_terrain
 from src.model.world_model import WorldModel
-from src.util.enums import TurnOwner
+from src.util.enums import TurnOwner, Color
 import src.util.config as conf
 import pickle
 import os.path
@@ -14,7 +14,7 @@ import os.path
 class FallenRoof(GameCore):
     def __init__(self):
         super().__init__(title=conf.TITLE,
-                         screen_width=conf.WIDTH_IN_TILES * conf.TILE_WIDTH,
+                         screen_width=conf.WIDTH_IN_TILES * conf.TILE_WIDTH + conf.INFO_WIDTH_IN_PIXELS,
                          screen_height=conf.HEIGHT_IN_TILES * conf.TILE_WIDTH,
                          fps=conf.FPS,
                          turn_delay=conf.TURN_DELAY)
@@ -42,7 +42,27 @@ class FallenRoof(GameCore):
             pickle.dump(self.world_model, file)
 
     def draw(self):
-        self.sprites.draw(self.main_surface)
+        self.sprites.draw(self.background)
+        self.draw_stats()
+
+    def draw_stats(self):
+        stats = self.world_model.get_player_characteristics()
+        x = conf.WIDTH_IN_TILES * conf.TILE_WIDTH
+        self.global_stats_font.render_to(self.background, (x, 0), f'Health: {stats["Health"]}', Color.BLACK.value)
+        self.global_stats_font.render_to(self.background, (x, 20), f'Strength: {stats["Strength"]}', Color.BLACK.value)
+        self.global_stats_font.render_to(self.background, (x, 40), f'Level: {stats["Level"]}', Color.BLACK.value)
+        self.global_stats_font.render_to(self.background, (x, 60), f'Experience: {stats["Experience"]}/{stats["Needed experience"]}', Color.BLACK.value)
+
+        x, y = self.world_model.get_player_position()
+        x *= conf.TILE_WIDTH
+        y -= 1
+        y *= conf.TILE_WIDTH
+        self.local_stats_font.render_to(self.background, (x - 18, y - 5), f' Health: {stats["Health"]} ', Color.RED.value)
+        self.local_stats_font.render_to(self.background, (x - 13, y + 8), f' Level: {stats["Level"]} ', Color.RED.value)
+
+        pl_name = self.world_model.get_player_name()
+        self.local_stats_font.render_to(self.background, (x - len(pl_name) * 2, y - 18), f' {pl_name} ',
+                                        Color.RED.value)
 
     def open_inventory(self):
         self.in_inventory = True

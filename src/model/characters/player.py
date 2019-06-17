@@ -8,14 +8,15 @@ from src.util.singleton import Singleton
 from src.model.has_image import HasImage
 
 
-class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
-    def __init__(self):
+class Player(CanMove, HasImage, HasInventory):
+    def __init__(self, name='2nd year master student'):
         CanMove.__init__(
             self,
             ConfusedMovementHandlerStateDecorator(BaseMovementHandlerState(), 10)
         )
         HasImage.__init__(self)
 
+        self.name = name
         self.next_level = 100
         self.basic_health = 100
         self.basic_strength = 10
@@ -61,3 +62,18 @@ class Player(CanMove, HasImage, HasInventory, metaclass=Singleton):
             x += 1
 
         return x, y
+
+    def get_health(self):
+        return self.health
+
+    def get_strength(self):
+        return self.strength
+
+    def get_level(self):
+        return self.level
+
+    def get_experience(self):
+        return self.experience
+
+    def get_next_level_experience(self):
+        return self.next_level

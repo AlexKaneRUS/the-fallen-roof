@@ -1,9 +1,11 @@
 import pygame
+import pygame.freetype
 import sys
 from abc import abstractmethod, ABC
 
 from src.util.button import Button
 from src.util.enums import TurnOwner, UserEvents, Color
+from src.util.text_sprite import TextSurface
 
 
 class GameCore(ABC):
@@ -13,14 +15,18 @@ class GameCore(ABC):
         # init display
         pygame.display.init()
         pygame.font.init()
+        pygame.freetype.init()
 
         self.to_draw = []
 
         self.background = pygame.Surface((screen_width, screen_height))
-        self.background.fill(Color.BLACK.value)
+        self.background.fill(Color.WHITE.value)
         pygame.display.set_caption(title)
         self.main_surface = pygame.display.set_mode(
             (screen_width, screen_height))
+
+        self.global_stats_font = pygame.freetype.SysFont('comicsansmsttf', 20)
+        self.local_stats_font = pygame.freetype.SysFont('comicsansmsttf', 15)
 
         # init sound
         pygame.mixer.pre_init(44100, 16, 2, 4096)
@@ -64,8 +70,6 @@ class GameCore(ABC):
         game_over_button.rect.center = self.background.get_rect().center
 
         while not self.game_over or not game_over_button_is_pressed:
-            self.main_surface.blit(self.background, (0, 0))
-
             if not self.game_over:
                 if self.turn_ticks:
                     self.turn_ticks -= 1
@@ -85,6 +89,8 @@ class GameCore(ABC):
             for x in self.to_draw:
                 x.draw(self.main_surface)
 
+            self.main_surface.blit(self.background, (0, 0))
+            self.background.fill(Color.WHITE.value)
             pygame.display.update()
             self.clock.tick(self.fps)
 
